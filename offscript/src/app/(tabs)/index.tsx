@@ -1,20 +1,18 @@
 // The Noticeboard: everything people have posted, newest first.
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PostCard } from '../../components/PostCard';
-import { Chip, Empty, Logo } from '../../components/ui';
-import { useMe } from '../../lib/auth';
-import { CITIES, POST_KINDS } from '../../lib/constants';
+import { Sticker } from '../../components/Sticker';
+import { Chip, Empty, Logo, Tap } from '../../components/ui';
+import { POST_KINDS } from '../../lib/constants';
 import { supabase } from '../../lib/supabase';
 import { colors, fonts, radius, space } from '../../lib/theme';
-import type { City, FeedPost, PostKind } from '../../lib/types';
+import type { FeedPost, PostKind } from '../../lib/types';
 
 export default function Noticeboard() {
-  const { profile } = useMe();
   const [posts, setPosts] = useState<FeedPost[]>([]);
-  const [city, setCity] = useState<City | 'All'>(profile.city);
   const [kind, setKind] = useState<PostKind | 'all'>('all');
   const [refreshing, setRefreshing] = useState(false);
 
@@ -27,11 +25,10 @@ export default function Noticeboard() {
       .or(`starts_at.is.null,starts_at.gte.${new Date(Date.now() - 3 * 3600_000).toISOString()}`)
       .order('created_at', { ascending: false })
       .limit(100);
-    if (city !== 'All') q = q.eq('city', city);
     if (kind !== 'all') q = q.eq('kind', kind);
     const { data } = await q;
     setPosts((data as FeedPost[]) ?? []);
-  }, [city, kind]);
+  }, [kind]);
 
   useFocusEffect(
     useCallback(() => {
@@ -41,19 +38,12 @@ export default function Noticeboard() {
 
   const header = (
     <View>
-      <View style={{ alignItems: 'center', paddingTop: space.sm, paddingBottom: space.md }}>
-        <Logo size={44} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: space.sm, marginBottom: space.sm }}>
-        {(['All', ...CITIES] as const).map((c) => (
-          <Chip key={c} label={c} selected={city === c} onPress={() => setCity(c)} />
-        ))}
-      </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: space.lg }}>
+      <Logo size={46} />
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: space.lg }}>
         <View style={{ flexDirection: 'row', gap: space.sm }}>
-          <Chip label="Everything" selected={kind === 'all'} onPress={() => setKind('all')} />
+          <Chip label="All" selected={kind === 'all'} onPress={() => setKind('all')} />
           {POST_KINDS.map((k) => (
-            <Chip key={k.kind} label={`${k.emoji} ${k.label}`} selected={kind === k.kind} onPress={() => setKind(k.kind)} />
+            <Chip key={k.kind} sticker={k.sticker} label={k.label} selected={kind === k.kind} onPress={() => setKind(k.kind)} />
           ))}
         </View>
       </ScrollView>
@@ -67,7 +57,7 @@ export default function Noticeboard() {
         keyExtractor={(p) => p.id}
         renderItem={({ item }) => <PostCard post={item} />}
         ListHeaderComponent={header}
-        ListEmptyComponent={<Empty title="quiet in here…" hint="Be the first — post a coffee run or a study session." />}
+        ListEmptyComponent={<Empty title="quiet in here" sticker="coffee" />}
         contentContainerStyle={{ padding: space.lg, paddingBottom: 120 }}
         refreshControl={
           <RefreshControl
@@ -82,27 +72,30 @@ export default function Noticeboard() {
         }
       />
 
-      {/* the big "+" button */}
-      <Pressable
+      <View style={{ position: 'absolute', right: space.lg, bottom: space.lg }}>
+      <Tap
         accessibilityLabel="New post"
         onPress={() => router.push('/post/new')}
         style={{
-          position: 'absolute',
-          right: space.lg,
-          bottom: space.lg,
           backgroundColor: colors.maroon,
           borderRadius: radius.pill,
-          paddingVertical: 14,
-          paddingHorizontal: 20,
+          paddingVertical: 10,
+          paddingLeft: 12,
+          paddingRight: 18,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 6,
           shadowColor: colors.tamarind,
-          shadowOpacity: 0.25,
+          shadowOpacity: 0.3,
           shadowRadius: 8,
           shadowOffset: { width: 0, height: 4 },
-          elevation: 4,
+          elevation: 5,
         }}
       >
-        <Text style={{ fontFamily: fonts.bodyBold, color: colors.butter, fontSize: 15 }}>＋  Post</Text>
-      </Pressable>
+        <Sticker name="postcard" size={30} />
+        <Text style={{ fontFamily: fonts.bodyBold, color: colors.butter, fontSize: 15 }}>Post</Text>
+      </Tap>
+      </View>
     </SafeAreaView>
   );
 }

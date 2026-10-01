@@ -39,7 +39,7 @@ export function ReportModal({
     setReason(null);
     setDetails('');
     onClose();
-    Alert.alert('Thank you', 'We read every report and will look into it.');
+    Alert.alert('Thank you ✿');
   };
 
   return (
@@ -53,7 +53,7 @@ export function ReportModal({
             ))}
           </ChipRow>
           <View style={{ height: space.md }} />
-          <Input label="Anything else? (optional)" value={details} onChangeText={setDetails} multiline maxLength={800} />
+          <Input placeholder="anything else? (optional)" value={details} onChangeText={setDetails} multiline maxLength={800} />
           <Button title="Send report" onPress={submit} loading={busy} disabled={!reason} />
           <Button title="Cancel" variant="ghost" onPress={onClose} style={{ marginTop: space.sm, borderWidth: 0 }} />
         </View>

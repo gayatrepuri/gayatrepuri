@@ -1,65 +1,62 @@
-// One post on the noticeboard (a coffee run, event, spare ticket...).
+// One post on the noticeboard, like a scrap pinned to a board.
 import { router } from 'expo-router';
 import { Text, View } from 'react-native';
 import { kindInfo } from '../lib/constants';
 import { formatWhen } from '../lib/format';
 import { colors, fonts, space } from '../lib/theme';
 import type { FeedPost } from '../lib/types';
-import { Avatar, Body, Card, Chip, ChipRow } from './ui';
+import { Sticker } from './Sticker';
+import { Avatar, Body, Card } from './ui';
 
-const TONES = { coffee: 'butter', event: 'blue', ticket: 'butter', conference: 'blue' } as const;
+const TONES = {
+  coffee: 'cream',
+  study: 'blue',
+  event: 'butter',
+  rant: 'kraft',
+  collab: 'cream',
+  ticket: 'kraft',
+  study_participants: 'blue',
+  conference: 'butter',
+  other: 'cream',
+} as const;
+
+// the same post always gets the same little tilt
+export function tiltFor(id: string) {
+  let h = 0;
+  for (const c of id) h = (h * 31 + c.charCodeAt(0)) | 0;
+  return ((Math.abs(h) % 5) - 2) * 0.8;
+}
 
 export function PostCard({ post }: { post: FeedPost }) {
   const info = kindInfo(post.kind);
-  const tone = (TONES as Record<string, 'butter' | 'blue'>)[post.kind] ?? 'white';
-  const spots = post.capacity ? `${post.attendee_count}/${post.capacity} going` : `${post.attendee_count} going`;
+  const going = post.capacity ? `${post.attendee_count}/${post.capacity}` : `${post.attendee_count}`;
 
   return (
-    <Card tone={tone} onPress={() => router.push(`/post/${post.id}`)} style={{ marginBottom: space.md }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: space.sm }}>
-        <Text style={{ fontFamily: fonts.bodyBold, fontSize: 11, letterSpacing: 1.5, color: colors.maroon }}>
-          {info.emoji}  {info.label.toUpperCase()}
+    <View style={{ marginBottom: space.xl, marginTop: space.sm }}>
+      <Card tone={TONES[post.kind]} tilt={tiltFor(post.id)} onPress={() => router.push(`/post/${post.id}`)} style={{ paddingTop: space.xl }}>
+        <Text style={{ fontFamily: fonts.heading, fontSize: 21, color: colors.tamarind, marginBottom: 6, paddingRight: 30 }}>
+          {post.title}
         </Text>
-        <Text style={{ fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.boho }}>{post.city}</Text>
-      </View>
-
-      <Text style={{ fontFamily: fonts.heading, fontSize: 21, color: colors.tamarind, marginBottom: 6 }}>
-        {post.title}
-      </Text>
-      {post.body ? (
-        <Body numberOfLines={2} style={{ marginBottom: space.sm }}>
-          {post.body}
+        <Body muted style={{ fontSize: 12 }}>
+          {formatWhen(post.starts_at)}
+          {post.location ? ` · ${post.location}` : ''}
         </Body>
-      ) : null}
 
-      <Body muted style={{ fontSize: 13 }}>
-        🕰 {formatWhen(post.starts_at)}
-        {post.location ? `   📍 ${post.location}` : ''}
-      </Body>
-
-      {post.tags.length ? (
-        <View style={{ marginTop: space.sm }}>
-          <ChipRow>
-            {post.tags.slice(0, 3).map((t) => (
-              <Chip key={t} label={t} small />
-            ))}
-          </ChipRow>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: space.md, gap: space.sm }}>
+          <Avatar name={post.author_name} url={post.author_avatar} size={26} />
+          <Body style={{ fontSize: 12, flex: 1 }} numberOfLines={1}>
+            {post.author_name}
+          </Body>
+          <Text style={{ fontFamily: fonts.bodyBold, fontSize: 12, color: colors.maroon }}>
+            {post.i_joined ? '✓ ' : ''}
+            {going} going
+          </Text>
         </View>
-      ) : null}
-
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: space.md, gap: space.sm }}>
-        <Avatar name={post.author_name} url={post.author_avatar} size={28} />
-        <Body style={{ fontSize: 13, flex: 1 }} numberOfLines={1}>
-          {post.author_name} · {post.author_university}
-        </Body>
-        <Text style={{ fontFamily: fonts.bodyBold, fontSize: 12, color: post.i_joined ? colors.maroon : colors.boho }}>
-          {post.i_joined ? '✓ ' : ''}
-          {spots}
-        </Text>
+      </Card>
+      {/* the sticker "pins" the card to the board */}
+      <View style={{ position: 'absolute', top: -14, right: 10, transform: [{ rotate: `${tiltFor(post.id) * 4}deg` }] }}>
+        <Sticker name={info.sticker} size={48} />
       </View>
-      {post.is_cancelled ? (
-        <Text style={{ fontFamily: fonts.bodyBold, color: colors.danger, marginTop: space.sm }}>Cancelled</Text>
-      ) : null}
-    </Card>
+    </View>
   );
 }

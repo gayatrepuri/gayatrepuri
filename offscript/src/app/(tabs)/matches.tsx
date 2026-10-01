@@ -1,31 +1,31 @@
-// Matches: people with a similar research focus, plus requests waiting for you.
+// Matches: swipe through people with a similar research focus.
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, View } from 'react-native';
-import { Avatar, Body, Button, Card, Chip, ChipRow, Empty, H1, H2, Screen, Script } from '../../components/ui';
+import { View } from 'react-native';
+import { GoldFrame } from '../../components/GoldFrame';
+import { SwipeDeck } from '../../components/SwipeDeck';
+import { Avatar, Body, Button, Card, Chip, ChipRow, Empty, H1, H2, Screen, Tap } from '../../components/ui';
 import { useMe } from '../../lib/auth';
-import { CITIES } from '../../lib/constants';
 import { handleError } from '../../lib/errors';
 import { supabase } from '../../lib/supabase';
 import { colors, space } from '../../lib/theme';
 import type { Match, PublicProfile } from '../../lib/types';
 
-type Request = { requester_id: string; note: string | null; person?: PublicProfile };
+type Request = { requester_id: string; person?: PublicProfile };
 
 export default function Matches() {
   const { userId, profile } = useMe();
   const [matches, setMatches] = useState<Match[]>([]);
   const [requests, setRequests] = useState<Request[]>([]);
-  const [city, setCity] = useState<string | null>(null);
-  const [sent, setSent] = useState<Set<string>>(new Set());
-  const isPlus = profile.is_plus;
+  const [deckKey, setDeckKey] = useState(0);
 
   const load = useCallback(async () => {
     const [{ data: m }, { data: r }] = await Promise.all([
-      supabase.rpc('suggested_matches', { only_city: city }),
-      supabase.from('connections').select('requester_id, note').eq('addressee_id', userId).eq('status', 'pending'),
+      supabase.rpc('suggested_matches', { only_city: null }),
+      supabase.from('connections').select('requester_id').eq('addressee_id', userId).eq('status', 'pending'),
     ]);
     setMatches((m as Match[]) ?? []);
+    setDeckKey((k) => k + 1);
     const reqs = (r as Request[]) ?? [];
     if (reqs.length) {
       const { data: people } = await supabase
@@ -35,7 +35,7 @@ export default function Matches() {
       reqs.forEach((x) => (x.person = (people as PublicProfile[])?.find((p) => p.id === x.requester_id)));
     }
     setRequests(reqs.filter((x) => x.person));
-  }, [city, userId]);
+  }, [userId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,43 +43,34 @@ export default function Matches() {
     }, [load]),
   );
 
-  const connect = async (id: string) => {
-    const { error } = await supabase.from('connections').insert({ requester_id: userId, addressee_id: id });
-    if (handleError(error)) return;
-    setSent(new Set(sent).add(id));
+  const sayHi = async (m: Match) => {
+    const { error } = await supabase.from('connections').insert({ requester_id: userId, addressee_id: m.id });
+    handleError(error);
   };
 
   const respond = async (id: string, status: 'accepted' | 'declined') => {
-    const { error } = await supabase
-      .from('connections')
-      .update({ status })
-      .eq('requester_id', id)
-      .eq('addressee_id', userId);
-    if (handleError(error)) return;
-    if (status === 'accepted') Alert.alert('It’s a match ✿', 'You can now message each other from Chats.');
-    load();
+    const { error } = await supabase.from('connections').update({ status }).eq('requester_id', id).eq('addressee_id', userId);
+    if (!handleError(error)) load();
   };
 
   return (
     <Screen>
-      <H1>Your people</H1>
-      <Script style={{ marginBottom: space.lg }}>similar research, nearby</Script>
+      <H1 style={{ textAlign: 'center', marginBottom: space.lg }}>Your people</H1>
 
       {requests.length ? (
         <View style={{ marginBottom: space.xl }}>
-          <H2 style={{ marginBottom: space.md }}>Waiting for you</H2>
+          <H2 style={{ marginBottom: space.md }}>Said hi to you</H2>
           {requests.map((r) => (
-            <Card key={r.requester_id} tone="butter" style={{ marginBottom: space.md }}>
-              <View style={{ flexDirection: 'row', gap: space.md, alignItems: 'center' }}>
-                <Avatar name={r.person!.display_name} url={r.person!.avatar_url} />
+            <Card key={r.requester_id} tone="butter" style={{ marginBottom: space.md, padding: space.md }}>
+              <Tap onPress={() => router.push(`/person/${r.requester_id}`)} style={{ flexDirection: 'row', gap: space.md, alignItems: 'center' }}>
+                <Avatar name={r.person!.display_name} url={r.person!.avatar_url} size={48} />
                 <View style={{ flex: 1 }}>
-                  <Body style={{ fontWeight: '700' }} >{r.person!.display_name}</Body>
-                  <Body muted>{r.person!.university}</Body>
+                  <Body bold>{r.person!.display_name}</Body>
+                  <Body muted numberOfLines={1}>{r.person!.university}</Body>
                 </View>
-              </View>
-              {r.note ? <Body style={{ marginTop: space.sm }}>“{r.note}”</Body> : null}
+              </Tap>
               <View style={{ flexDirection: 'row', gap: space.sm, marginTop: space.md }}>
-                <Button title="Accept" onPress={() => respond(r.requester_id, 'accepted')} style={{ flex: 1 }} />
+                <Button title="Hi back" sticker="waxheart" onPress={() => respond(r.requester_id, 'accepted')} style={{ flex: 1 }} />
                 <Button title="Not now" variant="ghost" onPress={() => respond(r.requester_id, 'declined')} style={{ flex: 1 }} />
               </View>
             </Card>
@@ -87,60 +78,49 @@ export default function Matches() {
         </View>
       ) : null}
 
-      <View style={{ flexDirection: 'row', gap: space.sm, marginBottom: space.lg }}>
-        <Chip label="Anywhere" selected={city === null} onPress={() => setCity(null)} />
-        {CITIES.map((c) => (
-          <Chip
-            key={c}
-            label={c}
-            selected={city === c}
-            onPress={() => (isPlus ? setCity(c) : router.push('/plus'))}
-          />
-        ))}
-      </View>
-
-      {matches.length === 0 ? (
-        <Empty title="finding your people…" hint="Add more interests to your profile to get better matches." />
-      ) : (
-        matches.map((m) => (
-          <Card key={m.id} onPress={() => router.push(`/person/${m.id}`)} style={{ marginBottom: space.md }}>
-            <View style={{ flexDirection: 'row', gap: space.md }}>
-              <Avatar name={m.display_name} url={m.avatar_url} size={52} />
-              <View style={{ flex: 1 }}>
-                <H2 style={{ fontSize: 19 }}>{m.display_name}</H2>
-                <Body muted style={{ fontSize: 13 }}>
-                  {[m.degree_stage, m.university].filter(Boolean).join(' · ')}
-                </Body>
-                {m.research_topic ? <Body style={{ marginTop: 4 }}>{m.research_topic}</Body> : null}
-              </View>
+      <SwipeDeck
+        key={deckKey}
+        items={matches}
+        onYes={sayHi}
+        empty={
+          profile.is_plus ? (
+            <Empty title="that's everyone for now" sticker="swan" />
+          ) : (
+            <View>
+              <Empty title="that's today's five" sticker="swan" />
+              <Button title="See everyone ✦" variant="butter" onPress={() => router.push('/plus')} />
             </View>
+          )
+        }
+        renderCard={(m) => (
+          <Card tone="cream" style={{ alignItems: 'center', paddingVertical: space.xl }}>
+            <Tap onPress={() => router.push(`/person/${m.id}`)}>
+              <GoldFrame uri={m.avatar_url} name={m.display_name} width={190} />
+            </Tap>
+            <H2 style={{ marginTop: space.md, textAlign: 'center' }}>{m.display_name}</H2>
+            <Body muted style={{ textAlign: 'center' }}>
+              {[m.degree_stage, m.university].filter(Boolean).join(' · ')}
+            </Body>
+            {m.research_topic ? (
+              <Body style={{ textAlign: 'center', marginTop: space.sm }} numberOfLines={2}>
+                “{m.research_topic}”
+              </Body>
+            ) : null}
             {m.shared_interests.length ? (
               <View style={{ marginTop: space.md }}>
                 <ChipRow>
-                  {m.shared_interests.map((t) => (
-                    <Chip key={t} label={`♡ ${t}`} small />
+                  {m.shared_interests.slice(0, 4).map((t) => (
+                    <Chip key={t} label={t} small sticker="hibiscus" />
                   ))}
                 </ChipRow>
               </View>
             ) : null}
-            <Button
-              title={sent.has(m.id) ? 'Request sent ✓' : 'Say hi'}
-              variant={sent.has(m.id) ? 'blue' : 'butter'}
-              disabled={sent.has(m.id)}
-              onPress={() => connect(m.id)}
-              style={{ marginTop: space.md }}
-            />
           </Card>
-        ))
-      )}
-
-      {!isPlus && matches.length >= 5 ? (
-        <Card tone="maroon" onPress={() => router.push('/plus')}>
-          <Body style={{ color: colors.butter, textAlign: 'center' }}>
-            Free shows your top 5 matches. Offscript Plus shows everyone ✦
-          </Body>
-        </Card>
-      ) : null}
+        )}
+      />
+      <Body muted style={{ textAlign: 'center', marginTop: space.md, fontSize: 11, color: colors.boho }}>
+        swipe ♡ or skip
+      </Body>
     </Screen>
   );
 }

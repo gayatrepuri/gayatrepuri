@@ -3,7 +3,8 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, Platform, View } from 'react-native';
 import type { PurchasesPackage } from 'react-native-purchases';
-import { Body, Button, Card, H1, Logo, Screen, Script } from '../components/ui';
+import { Sticker } from '../components/Sticker';
+import { Body, Button, H1, Logo, Screen } from '../components/ui';
 import { useMe } from '../lib/auth';
 import { PLUS_PERKS, PLUS_PRICE_LABEL } from '../lib/constants';
 import { buyPackage, getPlusPackages, purchasesAvailable, restorePurchases } from '../lib/purchases';
@@ -18,7 +19,7 @@ export default function Plus() {
     getPlusPackages().then(setPackages).catch(() => setPackages([]));
   }, []);
 
-  // The webhook updates the database a few seconds after paying, so check a few times.
+  // the webhook updates the database a few seconds after paying, so check a few times
   const waitForPlus = async () => {
     for (let i = 0; i < 6; i++) {
       await refreshProfile();
@@ -31,7 +32,6 @@ export default function Plus() {
     try {
       if (await buyPackage(pkg)) {
         await waitForPlus();
-        Alert.alert('Welcome to Plus ✦', 'Unlimited everything. Go have fun.');
         router.back();
       }
     } catch (e: any) {
@@ -46,7 +46,7 @@ export default function Plus() {
     try {
       const ok = await restorePurchases();
       if (ok) await waitForPlus();
-      Alert.alert(ok ? 'Restored ✦' : 'Nothing to restore', ok ? 'Your Plus subscription is back.' : 'We couldn’t find a previous subscription.');
+      Alert.alert(ok ? 'Restored ✦' : 'Nothing to restore');
     } finally {
       setBusy(null);
     }
@@ -55,49 +55,52 @@ export default function Plus() {
   return (
     <Screen bg={colors.maroon}>
       <View style={{ alignItems: 'center', marginTop: space.xl }}>
-        <Logo size={60} color={colors.butter} />
-        <H1 style={{ color: colors.butter, marginTop: space.md }}>Plus ✦</H1>
-        <Script style={{ color: colors.babyBlue, textAlign: 'center' }}>for the chronically sociable academic</Script>
+        <Sticker name="sparkle" size={64} />
+        <Logo size={58} color={colors.butter} />
+        <H1 style={{ color: colors.butter, marginTop: -space.sm }}>Plus</H1>
       </View>
 
-      <Card tone="butter" style={{ marginTop: space.xl }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: space.lg, marginTop: space.xl }}>
         {PLUS_PERKS.map((p) => (
-          <Body key={p} style={{ marginBottom: space.sm }}>✦  {p}</Body>
+          <View key={p.text} style={{ width: 96, alignItems: 'center', gap: 4 }}>
+            <Sticker name={p.sticker} size={44} />
+            <Body style={{ color: colors.butter, fontSize: 12, textAlign: 'center' }}>{p.text}</Body>
+          </View>
         ))}
-      </Card>
+      </View>
 
       {profile.is_plus ? (
-        <Body style={{ color: colors.butter, textAlign: 'center', marginTop: space.xl }}>You’re already on Plus — thank you!</Body>
+        <Body style={{ color: colors.butter, textAlign: 'center', marginTop: space.xl }}>You’re on Plus ✦</Body>
       ) : packages.length ? (
         <View style={{ gap: space.md, marginTop: space.xl }}>
           {packages.map((pkg) => (
             <Button
               key={pkg.identifier}
               variant="butter"
-              title={`${pkg.product.title.replace(/\s*\(.*\)$/, '')} — ${pkg.product.priceString}`}
+              title={`${pkg.product.title.replace(/\s*\(.*\)$/, '')} · ${pkg.product.priceString}`}
               onPress={() => buy(pkg)}
               loading={busy === pkg.identifier}
             />
           ))}
         </View>
       ) : (
-        <Card tone="blue" style={{ marginTop: space.xl }}>
-          <Body style={{ textAlign: 'center' }}>
-            {PLUS_PRICE_LABEL}
-            {'\n'}
-            {Platform.OS === 'web' || !purchasesAvailable()
-              ? 'Subscriptions work in the App Store / Google Play version of the app.'
-              : 'Loading prices…'}
-          </Body>
-        </Card>
+        <Body style={{ color: colors.butter, textAlign: 'center', marginTop: space.xl }}>
+          {PLUS_PRICE_LABEL}
+          {Platform.OS === 'web' || !purchasesAvailable() ? '\n(in the app store version)' : ''}
+        </Body>
       )}
 
-      <Button title="Restore purchases" variant="ghost" onPress={restore} loading={busy === 'restore'} style={{ marginTop: space.lg, borderColor: colors.butter }} />
-      <Button title="Maybe later" variant="ghost" onPress={() => router.back()} style={{ marginTop: space.sm, borderWidth: 0 }} />
-      <Body style={{ color: colors.cream, fontSize: 11, textAlign: 'center', marginTop: space.lg }}>
-        Renews monthly until cancelled. Cancel any time in your App Store / Google Play settings. Payment is charged to your
-        store account at confirmation.
-      </Body>
+      <View style={{ alignItems: 'center', gap: space.md, marginTop: space.xl }}>
+        <Body style={{ color: colors.cream }} onPress={restore}>
+          {busy === 'restore' ? 'restoring…' : 'restore purchases'}
+        </Body>
+        <Body style={{ color: colors.cream }} onPress={() => router.back()}>
+          not now
+        </Body>
+        <Body style={{ color: colors.line, fontSize: 10, textAlign: 'center' }}>
+          Renews until cancelled. Cancel any time in your store settings.
+        </Body>
+      </View>
     </Screen>
   );
 }

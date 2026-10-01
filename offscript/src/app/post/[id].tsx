@@ -1,9 +1,12 @@
 // One post in full: details, who's going, join / leave, group chat.
+// Joining "stamps" a wax seal onto the card.
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { Alert, Animated, View } from 'react-native';
+import { tiltFor } from '../../components/PostCard';
 import { ReportModal } from '../../components/ReportModal';
-import { Avatar, Body, Button, Card, Chip, ChipRow, H1, Label, Loading, Screen } from '../../components/ui';
+import { Sticker } from '../../components/Sticker';
+import { Avatar, Body, Button, Card, Chip, ChipRow, H1, Label, Loading, Screen, Tap, haptic } from '../../components/ui';
 import { useMe } from '../../lib/auth';
 import { kindInfo } from '../../lib/constants';
 import { handleError } from '../../lib/errors';
@@ -19,17 +22,19 @@ export default function PostDetail() {
   const [people, setPeople] = useState<PublicProfile[]>([]);
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
+  const stamp = useRef(new Animated.Value(0)).current;
 
   const load = useCallback(async () => {
     const { data } = await supabase.from('feed_posts').select('*').eq('id', id).maybeSingle();
     setPost(data as FeedPost | null);
+    if (data?.i_joined) stamp.setValue(1);
     const { data: att } = await supabase.from('post_attendees').select('user_id').eq('post_id', id);
     const ids = (att ?? []).map((a) => a.user_id);
     if (ids.length) {
       const { data: ppl } = await supabase.from('public_profiles').select('*').in('id', ids);
       setPeople((ppl as PublicProfile[]) ?? []);
     } else setPeople([]);
-  }, [id]);
+  }, [id, stamp]);
 
   useFocusEffect(
     useCallback(() => {
@@ -46,16 +51,21 @@ export default function PostDetail() {
     setBusy(true);
     const { error } = await supabase.from('post_attendees').insert({ post_id: id, user_id: userId });
     setBusy(false);
-    if (!handleError(error)) load();
+    if (handleError(error)) return;
+    haptic('success');
+    stamp.setValue(0);
+    Animated.spring(stamp, { toValue: 1, useNativeDriver: true, friction: 4, tension: 120 }).start();
+    load();
   };
   const leave = async () => {
     setBusy(true);
     await supabase.from('post_attendees').delete().eq('post_id', id).eq('user_id', userId);
     setBusy(false);
+    stamp.setValue(0);
     load();
   };
   const cancel = () =>
-    Alert.alert('Cancel this?', 'People who joined will see it’s cancelled.', [
+    Alert.alert('Cancel this?', '', [
       { text: 'Keep it', style: 'cancel' },
       {
         text: 'Cancel it',
@@ -67,50 +77,64 @@ export default function PostDetail() {
       },
     ]);
 
+  const stampStyle = {
+    opacity: stamp,
+    transform: [
+      { scale: stamp.interpolate({ inputRange: [0, 1], outputRange: [2.4, 1] }) },
+      { rotate: '-14deg' },
+    ],
+  };
+
   return (
     <Screen>
-      <Body style={{ fontWeight: '700', color: colors.maroon, letterSpacing: 1.5, fontSize: 12 }}>
-        {info.emoji}  {info.label.toUpperCase()} · {post.city.toUpperCase()}
-      </Body>
-      <H1 style={{ marginTop: space.sm }}>{post.title}</H1>
-
-      <Card tone="butter" style={{ marginTop: space.lg }}>
-        <Body>🕰  {formatWhen(post.starts_at)}</Body>
-        {post.location ? <Body style={{ marginTop: 4 }}>📍  {post.location}</Body> : null}
-        <Body style={{ marginTop: 4 }}>
-          👥  {post.attendee_count} going{post.capacity ? ` · ${post.capacity} max` : ''}
-        </Body>
-      </Card>
-
-      {post.body ? <Body style={{ marginTop: space.lg }}>{post.body}</Body> : null}
-      {post.tags.length ? (
-        <View style={{ marginTop: space.md }}>
-          <ChipRow>
-            {post.tags.map((t) => (
-              <Chip key={t} label={t} small />
-            ))}
-          </ChipRow>
+      <View>
+        <Card tone="cream" tilt={tiltFor(post.id)} style={{ paddingTop: space.xl, marginTop: space.lg }}>
+          <H1 style={{ fontSize: 28, paddingRight: 40 }}>{post.title}</H1>
+          <Body muted style={{ marginTop: space.sm }}>
+            {formatWhen(post.starts_at)}
+            {post.location ? `\n${post.location}` : ''}
+          </Body>
+          {post.body ? <Body style={{ marginTop: space.md }}>{post.body}</Body> : null}
+          {post.tags.length ? (
+            <View style={{ marginTop: space.md }}>
+              <ChipRow>
+                {post.tags.map((t) => (
+                  <Chip key={t} label={t} small />
+                ))}
+              </ChipRow>
+            </View>
+          ) : null}
+          <Body bold style={{ marginTop: space.md, color: colors.maroon }}>
+            {post.attendee_count}
+            {post.capacity ? `/${post.capacity}` : ''} going
+          </Body>
+        </Card>
+        <View style={{ position: 'absolute', top: 0, right: 8 }}>
+          <Sticker name={info.sticker} size={60} />
         </View>
-      ) : null}
+        <Animated.View pointerEvents="none" style={[{ position: 'absolute', bottom: -10, right: 16 }, stampStyle]}>
+          <Sticker name="waxseal" size={78} />
+        </Animated.View>
+      </View>
 
-      <Label>{'\n'}Hosted by</Label>
-      <Pressable onPress={() => router.push(`/person/${post.author_id}`)} style={{ flexDirection: 'row', gap: space.md, alignItems: 'center' }}>
-        <Avatar name={post.author_name} url={post.author_avatar} />
+      <Label>{'\n'}Host</Label>
+      <Tap onPress={() => router.push(`/person/${post.author_id}`)} style={{ flexDirection: 'row', gap: space.md, alignItems: 'center' }}>
+        <Avatar name={post.author_name} url={post.author_avatar} size={46} />
         <View>
-          <Body style={{ fontWeight: '700' }}>{post.author_name}</Body>
-          <Body muted>{[post.author_field, post.author_university].filter(Boolean).join(' · ')}</Body>
+          <Body bold>{post.author_name}</Body>
+          <Body muted>{post.author_university}</Body>
         </View>
-      </Pressable>
+      </Tap>
 
       {people.length ? (
         <>
           <Label>{'\n'}Going</Label>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
             {people.map((p) => (
-              <Pressable key={p.id} onPress={() => router.push(`/person/${p.id}`)} style={{ alignItems: 'center', width: 64 }}>
+              <Tap key={p.id} onPress={() => router.push(`/person/${p.id}`)} style={{ alignItems: 'center', width: 60 }}>
                 <Avatar name={p.display_name} url={p.avatar_url} />
-                <Body numberOfLines={1} style={{ fontSize: 12 }}>{p.display_name.split(' ')[0]}</Body>
-              </Pressable>
+                <Body numberOfLines={1} style={{ fontSize: 11 }}>{p.display_name.split(' ')[0]}</Body>
+              </Tap>
             ))}
           </View>
         </>
@@ -118,22 +142,24 @@ export default function PostDetail() {
 
       <View style={{ marginTop: space.xl, gap: space.md }}>
         {post.is_cancelled ? (
-          <Body style={{ color: colors.danger, textAlign: 'center' }}>This was cancelled.</Body>
+          <Body style={{ color: colors.danger, textAlign: 'center' }}>Cancelled</Body>
         ) : isHost ? (
           <>
-            <Button title="Open group chat" onPress={() => router.push(`/post/chat/${id}`)} />
-            <Button title="Cancel this post" variant="danger" onPress={cancel} />
+            <Button title="Group chat" sticker="envelope" onPress={() => router.push(`/post/chat/${id}`)} />
+            <Button title="Cancel post" variant="danger" onPress={cancel} />
           </>
         ) : post.i_joined ? (
           <>
-            <Button title="Open group chat" onPress={() => router.push(`/post/chat/${id}`)} />
-            <Button title="I can’t make it anymore" variant="ghost" onPress={leave} loading={busy} />
+            <Button title="Group chat" sticker="envelope" onPress={() => router.push(`/post/chat/${id}`)} />
+            <Button title="Can’t make it" variant="ghost" onPress={leave} loading={busy} />
           </>
         ) : (
-          <Button title={full ? 'Full' : 'I’m in!'} onPress={join} loading={busy} disabled={full} />
+          <Button title={full ? 'Full' : 'I’m in'} sticker="waxseal" onPress={join} loading={busy} disabled={full} />
         )}
         {!isHost ? (
-          <Button title="Report post" variant="ghost" onPress={() => setReporting(true)} style={{ borderWidth: 0 }} />
+          <Body muted style={{ textAlign: 'center', fontSize: 12, marginTop: space.md }} onPress={() => setReporting(true)}>
+            report
+          </Body>
         ) : null}
       </View>
       <ReportModal visible={reporting} onClose={() => setReporting(false)} reporterId={userId} targetPost={id} targetUser={post.author_id} />

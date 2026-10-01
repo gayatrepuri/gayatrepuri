@@ -28,7 +28,7 @@ export default function DirectMessage() {
           title: name,
           headerRight: () => (
             <Pressable onPress={() => router.push(`/person/${id}`)}>
-              <Text style={{ fontFamily: fonts.bodyMedium, color: colors.maroon }}>Profile</Text>
+              <Text style={{ fontFamily: fonts.bodyBold, color: colors.maroon }}>Profile</Text>
             </Pressable>
           ),
         }}

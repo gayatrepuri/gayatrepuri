@@ -1,9 +1,11 @@
 // The building blocks every screen uses: buttons, inputs, chips, cards...
-// They all share the Offscript look from src/lib/theme.ts.
-import type { ReactNode } from 'react';
+// Everything you can tap gently squishes and gives a tiny vibration.
+import * as Haptics from 'expo-haptics';
+import { useRef, type ReactNode } from 'react';
 import {
   ActivityIndicator,
-  Image,
+  Animated,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -17,6 +19,54 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, radius, space } from '../lib/theme';
+import { GoldAvatar } from './GoldFrame';
+import { Sticker, type StickerName } from './Sticker';
+
+export function haptic(kind: 'light' | 'success' = 'light') {
+  if (Platform.OS === 'web') return;
+  if (kind === 'success') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+  else Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+}
+
+/** A pressable that squishes when touched. */
+export function Tap({
+  children,
+  onPress,
+  onLongPress,
+  style,
+  disabled,
+  accessibilityLabel,
+}: {
+  children: ReactNode;
+  onPress?: () => void;
+  onLongPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
+  accessibilityLabel?: string;
+}) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const to = (v: number) => Animated.spring(scale, { toValue: v, useNativeDriver: true, speed: 40, bounciness: 8 }).start();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      disabled={disabled}
+      onPressIn={() => to(0.95)}
+      onPressOut={() => to(1)}
+      onPress={
+        onPress
+          ? () => {
+              haptic();
+              onPress();
+            }
+          : undefined
+      }
+      onLongPress={onLongPress}
+    >
+      <Animated.View style={[style, { transform: [{ scale }] }]}>{children}</Animated.View>
+    </Pressable>
+  );
+}
 
 export function Screen({
   children,
@@ -45,23 +95,12 @@ export function Screen({
   );
 }
 
-/** The "Offscript" wordmark in the swashy script font. */
+/** The "Offscript" wordmark. */
 export function Logo({ size = 56, color = colors.maroon }: { size?: number; color?: string }) {
   return (
-    <View style={{ alignItems: 'center' }}>
-      <Text style={{ fontFamily: fonts.logo, fontSize: size, color, lineHeight: size * 1.35 }}>Offscript</Text>
-      <Text
-        style={{
-          fontFamily: fonts.bodyBold,
-          fontSize: size * 0.2,
-          letterSpacing: size * 0.06,
-          color,
-          marginTop: -size * 0.02,
-        }}
-      >
-        LONDON · CAMBRIDGE
-      </Text>
-    </View>
+    <Text style={{ fontFamily: fonts.logo, fontSize: size, color, lineHeight: size * 1.35, textAlign: 'center' }}>
+      Offscript
+    </Text>
   );
 }
 
@@ -78,17 +117,23 @@ export function Body({
   children,
   style,
   muted,
+  bold,
   numberOfLines,
   onPress,
 }: {
   children: ReactNode;
   style?: StyleProp<TextStyle>;
   muted?: boolean;
+  bold?: boolean;
   numberOfLines?: number;
   onPress?: () => void;
 }) {
   return (
-    <Text numberOfLines={numberOfLines} onPress={onPress} style={[styles.body, muted && { color: colors.boho }, style]}>
+    <Text
+      numberOfLines={numberOfLines}
+      onPress={onPress}
+      style={[styles.body, muted && { color: colors.boho }, bold && { fontFamily: fonts.bodyBold }, style]}
+    >
       {children}
     </Text>
   );
@@ -105,6 +150,7 @@ export function Button({
   loading,
   disabled,
   style,
+  sticker,
 }: {
   title: string;
   onPress?: () => void;
@@ -112,6 +158,7 @@ export function Button({
   loading?: boolean;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
+  sticker?: StickerName;
 }) {
   const palette: Record<ButtonVariant, { bg: string; fg: string; border: string }> = {
     primary: { bg: colors.maroon, fg: colors.butter, border: colors.maroon },
@@ -122,22 +169,20 @@ export function Button({
   };
   const p = palette[variant];
   return (
-    <Pressable
-      accessibilityRole="button"
+    <Tap
       onPress={onPress}
       disabled={disabled || loading}
-      style={({ pressed }) => [
-        styles.button,
-        { backgroundColor: p.bg, borderColor: p.border, opacity: disabled ? 0.45 : pressed ? 0.8 : 1 },
-        style,
-      ]}
+      style={[styles.button, { backgroundColor: p.bg, borderColor: p.border, opacity: disabled ? 0.45 : 1 }, style]}
     >
       {loading ? (
         <ActivityIndicator color={p.fg} />
       ) : (
-        <Text style={[styles.buttonText, { color: p.fg }]}>{title}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {sticker ? <Sticker name={sticker} size={22} /> : null}
+          <Text style={[styles.buttonText, { color: p.fg }]}>{title}</Text>
+        </View>
       )}
-    </Pressable>
+    </Tap>
   );
 }
 
@@ -146,7 +191,7 @@ export function Input({ label, style, ...props }: TextInputProps & { label?: str
     <View style={{ marginBottom: space.md }}>
       {label ? <Label>{label}</Label> : null}
       <TextInput
-        placeholderTextColor={colors.boho + '99'}
+        placeholderTextColor={colors.boho + '88'}
         style={[styles.input, props.multiline && { minHeight: 96, textAlignVertical: 'top' }, style]}
         {...props}
       />
@@ -159,90 +204,82 @@ export function Chip({
   selected,
   onPress,
   small,
+  sticker,
 }: {
   label: string;
   selected?: boolean;
   onPress?: () => void;
   small?: boolean;
+  sticker?: StickerName;
 }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={!onPress}
+  const body = (
+    <View
       style={[
         styles.chip,
-        small && { paddingVertical: 4, paddingHorizontal: 10 },
+        small && { paddingVertical: 3, paddingHorizontal: 9 },
         selected && { backgroundColor: colors.maroon, borderColor: colors.maroon },
       ]}
     >
-      <Text style={[styles.chipText, small && { fontSize: 12 }, selected && { color: colors.butter }]}>{label}</Text>
-    </Pressable>
+      {sticker ? <Sticker name={sticker} size={small ? 16 : 20} /> : null}
+      <Text style={[styles.chipText, small && { fontSize: 11 }, selected && { color: colors.butter }]}>{label}</Text>
+    </View>
   );
+  return onPress ? <Tap onPress={onPress}>{body}</Tap> : body;
 }
 
 export function ChipRow({ children }: { children: ReactNode }) {
   return <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>{children}</View>;
 }
 
+type Tone = 'white' | 'cream' | 'kraft' | 'butter' | 'blue' | 'maroon';
+const TONE_BG: Record<Tone, string> = {
+  white: colors.white,
+  cream: colors.cream,
+  kraft: colors.kraft,
+  butter: colors.butter,
+  blue: colors.babyBlue,
+  maroon: colors.maroon,
+};
+
 export function Card({
   children,
   style,
-  tone = 'white',
+  tone = 'cream',
   onPress,
+  tilt = 0,
 }: {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
-  tone?: 'white' | 'butter' | 'blue' | 'maroon';
+  tone?: Tone;
   onPress?: () => void;
+  tilt?: number;
 }) {
-  const bg = { white: colors.white, butter: colors.butter, blue: colors.babyBlue, maroon: colors.maroon }[tone];
-  const content = <View style={[styles.card, { backgroundColor: bg }, style]}>{children}</View>;
-  if (!onPress) return content;
-  return (
-    <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}>
-      {content}
-    </Pressable>
+  const s = [styles.card, { backgroundColor: TONE_BG[tone], transform: [{ rotate: `${tilt}deg` }] }, style];
+  return onPress ? (
+    <Tap onPress={onPress} style={s}>
+      {children}
+    </Tap>
+  ) : (
+    <View style={s}>{children}</View>
   );
 }
 
-export function Avatar({ name, url, size = 44 }: { name?: string | null; url?: string | null; size?: number }) {
-  if (url) {
-    return <Image source={{ uri: url }} style={{ width: size, height: size, borderRadius: size / 2 }} />;
-  }
-  const initials = (name ?? '?')
-    .split(' ')
-    .map((w) => w[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-        backgroundColor: colors.babyBlue,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Text style={{ fontFamily: fonts.heading, color: colors.maroon, fontSize: size * 0.4 }}>{initials}</Text>
-    </View>
-  );
-}
+export const Avatar = ({ name, url, size = 44 }: { name?: string | null; url?: string | null; size?: number }) => (
+  <GoldAvatar name={name} uri={url} size={size} />
+);
 
-export function Empty({ title, hint }: { title: string; hint?: string }) {
+export function Empty({ title, sticker = 'bunny' }: { title: string; sticker?: StickerName }) {
   return (
-    <View style={{ alignItems: 'center', paddingVertical: space.xxl }}>
-      <Script style={{ fontSize: 34 }}>{title}</Script>
-      {hint ? <Body muted style={{ textAlign: 'center', marginTop: space.sm }}>{hint}</Body> : null}
+    <View style={{ alignItems: 'center', paddingVertical: space.xxl, gap: space.sm }}>
+      <Sticker name={sticker} size={72} />
+      <Script style={{ fontSize: 30 }}>{title}</Script>
     </View>
   );
 }
 
 export function Loading() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: space.xxl }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: space.xxl, backgroundColor: colors.paper }}>
       <ActivityIndicator color={colors.maroon} />
     </View>
   );
@@ -252,11 +289,11 @@ export const styles = StyleSheet.create({
   h1: { fontFamily: fonts.heading, fontSize: 32, color: colors.maroon, letterSpacing: 1 },
   h2: { fontFamily: fonts.heading, fontSize: 22, color: colors.maroon, letterSpacing: 0.5 },
   script: { fontFamily: fonts.script, fontSize: 26, color: colors.maroonSoft },
-  body: { fontFamily: fonts.body, fontSize: 15, color: colors.coffee, lineHeight: 21 },
+  body: { fontFamily: fonts.body, fontSize: 14, color: colors.coffee, lineHeight: 20 },
   label: {
     fontFamily: fonts.bodyBold,
     fontSize: 11,
-    letterSpacing: 1.6,
+    letterSpacing: 1.5,
     color: colors.boho,
     textTransform: 'uppercase',
     marginBottom: 6,
@@ -264,17 +301,17 @@ export const styles = StyleSheet.create({
   button: {
     borderRadius: radius.pill,
     borderWidth: 1.5,
-    paddingVertical: 14,
+    paddingVertical: 13,
     paddingHorizontal: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: { fontFamily: fonts.bodyBold, fontSize: 15, letterSpacing: 0.5 },
+  buttonText: { fontFamily: fonts.bodyBold, fontSize: 15, letterSpacing: 0.3 },
   input: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.cream,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.cream,
+    borderColor: colors.line,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontFamily: fonts.body,
@@ -282,21 +319,24 @@ export const styles = StyleSheet.create({
     color: colors.coffee,
   },
   chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.maroon + '55',
-    backgroundColor: colors.white,
-    paddingVertical: 7,
-    paddingHorizontal: 13,
+    borderColor: colors.maroon + '44',
+    backgroundColor: colors.cream,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
-  chipText: { fontFamily: fonts.bodyMedium, fontSize: 13, color: colors.maroon },
+  chipText: { fontFamily: fonts.body, fontSize: 13, color: colors.maroon },
   card: {
-    borderRadius: radius.lg,
+    borderRadius: radius.sm,
     padding: space.lg,
     shadowColor: colors.tamarind,
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
+    elevation: 3,
   },
 });

@@ -2,7 +2,7 @@
 
 *coffee runs, thesis rants & the people who get it*
 
-Offscript is a meetup app for academics in **London and Cambridge**. Students, PhDs, postdocs and staff can:
+Offscript is a meetup app for academics. It launches in **London and Cambridge**, but the app never names a city: anyone signing up from another university just sees *"we aren't there yet"*. Students, PhDs, postdocs and staff can:
 
 - ☕ **Post coffee runs & study sessions**: "Heading to Waterstones to work on my thesis, anyone wanna co-work?", "Going to Jack's Gelato after lab, anyone want to chat physics?"
 - 🎬 **Host events**: movie nights in the common room, socials, pub quizzes.
@@ -13,7 +13,13 @@ Offscript is a meetup app for academics in **London and Cambridge**. Students, P
 - 🌧️ **Rant about dissertations**: with people who understand.
 - ✨ **Get matched** with people near you who have a similar research focus (or a refreshingly different one).
 
-Sign-up needs a **university email** (e.g. `@ucl.ac.uk`, `@cam.ac.uk`). New members answer a few fun questions (favourite movie, favourite song, favourite place to cry at uni, dream holiday…) and **choose which answers to show** on their profile.
+Sign-up needs a **university email** (e.g. `@ucl.ac.uk`, `@cam.ac.uk`). New members add a portrait (shown in an ornate gold frame) and answer a few fun questions (favourite movie, favourite song, favourite place to cry at uni, dream holiday…). They **choose which answers to show**, and each answer appears next to its own vintage sticker: headphones for the song, a postcard for the dream destination, a ticket stub for the movie.
+
+The look: maroon, butter yellow and baby blue, Brioche-style headings, typewriter text, and scrapbook stickers. Matches is a swipe deck, posts are pinned like scraps on a board, and joining a meetup stamps a wax seal.
+
+| | | |
+|---|---|---|
+| ![Landing](docs/screens/landing.png) | ![Board](docs/screens/board.png) | ![Profile](docs/screens/profile.png) |
 
 **Built with:** React Native + Expo (SDK 57) · Expo Router · Supabase (database, login, chat, photos) · RevenueCat (subscriptions).
 

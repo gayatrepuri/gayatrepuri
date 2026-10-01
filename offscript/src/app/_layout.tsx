@@ -1,7 +1,7 @@
 // The "frame" around the whole app: loads fonts, keeps track of who is
 // logged in, and decides which screens they're allowed to see.
 import { DellaRespira_400Regular } from '@expo-google-fonts/della-respira';
-import { DMSans_400Regular, DMSans_500Medium, DMSans_700Bold } from '@expo-google-fonts/dm-sans';
+import { CourierPrime_400Regular, CourierPrime_400Regular_Italic, CourierPrime_700Bold } from '@expo-google-fonts/courier-prime';
 import { Sacramento_400Regular } from '@expo-google-fonts/sacramento';
 import { Yesteryear_400Regular } from '@expo-google-fonts/yesteryear';
 import { useFonts } from 'expo-font';
@@ -20,9 +20,9 @@ function RootStack() {
     Yesteryear_400Regular,
     DellaRespira_400Regular,
     Sacramento_400Regular,
-    DMSans_400Regular,
-    DMSans_500Medium,
-    DMSans_700Bold,
+    CourierPrime_400Regular,
+    CourierPrime_400Regular_Italic,
+    CourierPrime_700Bold,
   });
   const ready = fontsLoaded && !loading;
 

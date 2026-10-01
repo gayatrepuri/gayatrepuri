@@ -10,7 +10,7 @@
 | Post a meetup / coffee run / request | **3 per month** | Unlimited |
 | Join meetups & RSVP to events | **5 per month** | Unlimited |
 | Send match requests ("Say hi") | **5 per week** | Unlimited |
-| Suggested matches | **Top 5** | Everyone (up to 100), filter by city |
+| Suggested matches (swipe deck) | **Top 5** | Everyone (up to 100) |
 | Host events (movie nights, socials) | **1 upcoming at a time** | Unlimited |
 | ✦ badge next to your name | – | ✅ |
 

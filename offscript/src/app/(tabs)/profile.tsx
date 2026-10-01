@@ -1,9 +1,10 @@
-// "Me": your profile, your plan, settings, sign out and delete account.
+// "Me": your framed portrait, your stickers, your plan and settings.
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, Linking, Platform, View } from 'react-native';
+import { GoldFrame } from '../../components/GoldFrame';
 import { ProfileDetails } from '../../components/ProfileDetails';
-import { Avatar, Body, Button, Card, H1, H2, Label, Screen } from '../../components/ui';
+import { Body, Button, Card, H1, Screen, Tap } from '../../components/ui';
 import { useAuth, useMe } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
 import { colors, space } from '../../lib/theme';
@@ -23,10 +24,10 @@ export default function Me() {
   );
 
   const deleteAccount = () =>
-    Alert.alert('Delete your account?', 'This permanently deletes your profile, posts and messages. It cannot be undone.', [
+    Alert.alert('Delete your account?', 'This can’t be undone.', [
       { text: 'Cancel', style: 'cancel' },
       {
-        text: 'Delete forever',
+        text: 'Delete',
         style: 'destructive',
         onPress: async () => {
           const { error } = await supabase.rpc('delete_my_account');
@@ -39,60 +40,54 @@ export default function Me() {
   return (
     <Screen>
       <View style={{ alignItems: 'center', marginBottom: space.lg }}>
-        <Avatar name={profile.display_name} url={profile.avatar_url} size={96} />
+        <Tap onPress={() => router.push('/edit-profile')}>
+          <GoldFrame uri={profile.avatar_url} name={profile.display_name} width={220} />
+        </Tap>
         <H1 style={{ marginTop: space.md, textAlign: 'center' }}>
           {profile.display_name}
           {profile.is_plus ? ' ✦' : ''}
         </H1>
-        <Body muted>
-          {profile.university} · {profile.city}
-        </Body>
+        <Body muted>{profile.university}</Body>
       </View>
 
-      <Button title="Edit profile & privacy" variant="butter" onPress={() => router.push('/edit-profile')} />
+      <Button title="Edit" variant="butter" sticker="clip" onPress={() => router.push('/edit-profile')} />
 
-      {/* Plan card */}
-      <Card tone={profile.is_plus ? 'butter' : 'maroon'} style={{ marginVertical: space.xl }}>
-        <H2 style={{ color: profile.is_plus ? colors.maroon : colors.butter }}>
-          {profile.is_plus ? 'Offscript Plus ✦' : 'Free plan'}
-        </H2>
-        {usage && !usage.is_plus ? (
-          <View style={{ marginTop: space.sm }}>
-            <Body style={{ color: colors.butter }}>
-              Posts this month: {usage.posts_this_month}/{usage.limits.posts_per_month}
-            </Body>
-            <Body style={{ color: colors.butter }}>
-              Meetups joined this month: {usage.joins_this_month}/{usage.limits.joins_per_month}
-            </Body>
-            <Body style={{ color: colors.butter }}>
-              Match requests this week: {usage.connections_this_week}/{usage.limits.connections_per_week}
-            </Body>
-            <Button title="Go unlimited — Plus" variant="butter" onPress={() => router.push('/plus')} style={{ marginTop: space.md }} />
-          </View>
-        ) : (
-          <Body style={{ marginTop: space.sm }}>Unlimited everything. Thank you for supporting Offscript!</Body>
-        )}
-      </Card>
+      {usage && !usage.is_plus ? (
+        <Card tone="maroon" onPress={() => router.push('/plus')} style={{ marginTop: space.xl }}>
+          <Body style={{ color: colors.butter, textAlign: 'center' }}>
+            {usage.posts_this_month}/{usage.limits.posts_per_month} posts · {usage.joins_this_month}/{usage.limits.joins_per_month} joins ·{' '}
+            {usage.connections_this_week}/{usage.limits.connections_per_week} hellos
+          </Body>
+          <Body bold style={{ color: colors.butter, textAlign: 'center', marginTop: 4 }}>
+            Go unlimited ✦
+          </Body>
+        </Card>
+      ) : null}
 
-      <Label>How others see you</Label>
-      <Card style={{ marginBottom: space.xl }}>
+      <View style={{ marginTop: space.xl }}>
         <ProfileDetails person={profile} visible={profile.visible_fields} />
-      </Card>
+      </View>
 
-      <Button
-        title="Manage subscription"
-        variant="ghost"
-        onPress={() =>
-          Linking.openURL(
-            Platform.OS === 'android'
-              ? 'https://play.google.com/store/account/subscriptions'
-              : 'https://apps.apple.com/account/subscriptions',
-          )
-        }
-        style={{ marginBottom: space.md }}
-      />
-      <Button title="Sign out" variant="ghost" onPress={signOut} style={{ marginBottom: space.md }} />
-      <Button title="Delete my account" variant="danger" onPress={deleteAccount} />
+      <View style={{ marginTop: space.xxl, alignItems: 'center', gap: space.md }}>
+        {profile.is_plus ? (
+          <Body
+            muted
+            onPress={() =>
+              Linking.openURL(
+                Platform.OS === 'android'
+                  ? 'https://play.google.com/store/account/subscriptions'
+                  : 'https://apps.apple.com/account/subscriptions',
+              )
+            }
+          >
+            manage subscription
+          </Body>
+        ) : null}
+        <Body muted onPress={signOut}>sign out</Body>
+        <Body muted style={{ color: colors.danger, fontSize: 12 }} onPress={deleteAccount}>
+          delete account
+        </Body>
+      </View>
     </Screen>
   );
 }

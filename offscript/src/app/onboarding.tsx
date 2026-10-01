@@ -1,13 +1,13 @@
-// The questions new people answer before they get in (4 short steps).
+// New people answer a few questions before they get in (5 short steps).
 import { useState } from 'react';
 import { Alert, View } from 'react-native';
 import { ProfileSection, draftFromProfile, type ProfileDraft, type Section } from '../components/ProfileForm';
-import { Body, Button, Screen, Script } from '../components/ui';
+import { Button, Screen } from '../components/ui';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { colors, space } from '../lib/theme';
 
-const STEPS: Section[] = ['basics', 'research', 'fun', 'privacy'];
+const STEPS: Section[] = ['basics', 'photo', 'research', 'fun', 'privacy'];
 
 export default function Onboarding() {
   const { profile, refreshProfile, signOut } = useAuth();
@@ -16,12 +16,8 @@ export default function Onboarding() {
   const [saving, setSaving] = useState(false);
 
   const next = async () => {
-    if (step === 0 && draft.display_name.trim().length < 2) {
-      return Alert.alert('One thing', 'Pop in the name you’d like people to see.');
-    }
-    if (step === 1 && !draft.research_field) {
-      return Alert.alert('One thing', 'Pick a broad research field so we can find your people.');
-    }
+    if (step === 0 && draft.display_name.trim().length < 2) return Alert.alert('Your name?');
+    if (STEPS[step] === 'research' && !draft.research_field) return Alert.alert('Pick a field');
     if (step < STEPS.length - 1) return setStep(step + 1);
 
     setSaving(true);
@@ -36,21 +32,31 @@ export default function Onboarding() {
 
   return (
     <Screen>
-      <Script style={{ textAlign: 'center' }}>welcome to offscript</Script>
-      <Body muted style={{ textAlign: 'center', marginBottom: space.md }}>
-        {profile?.university} · step {step + 1} of {STEPS.length}
-      </Body>
-      <View style={{ flexDirection: 'row', gap: 6, marginBottom: space.xl }}>
+      {/* progress: a row of little dots that fill in */}
+      <View style={{ flexDirection: 'row', gap: 8, justifyContent: 'center', marginBottom: space.xl, marginTop: space.md }}>
         {STEPS.map((s, i) => (
-          <View key={s} style={{ flex: 1, height: 4, borderRadius: 2, backgroundColor: i <= step ? colors.maroon : colors.cream }} />
+          <View
+            key={s}
+            style={{
+              width: i === step ? 22 : 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: i <= step ? colors.maroon : colors.line,
+            }}
+          />
         ))}
       </View>
 
-      <ProfileSection section={STEPS[step]} draft={draft} setDraft={setDraft} city={profile?.city ?? 'London'} />
+      <ProfileSection section={STEPS[step]} draft={draft} setDraft={setDraft} userId={profile!.id} />
 
       <View style={{ flexDirection: 'row', gap: space.md, marginTop: space.xl }}>
         {step > 0 ? <Button title="Back" variant="ghost" onPress={() => setStep(step - 1)} style={{ flex: 1 }} /> : null}
-        <Button title={step === STEPS.length - 1 ? 'Finish' : 'Next'} onPress={next} loading={saving} style={{ flex: 2 }} />
+        <Button
+          title={step === STEPS.length - 1 ? 'Done' : STEPS[step] === 'photo' && !draft.avatar_url ? 'Skip' : 'Next'}
+          onPress={next}
+          loading={saving}
+          style={{ flex: 2 }}
+        />
       </View>
       {step === 0 ? (
         <Button title="Sign out" variant="ghost" onPress={signOut} style={{ marginTop: space.lg, borderWidth: 0 }} />

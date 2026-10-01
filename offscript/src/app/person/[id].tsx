@@ -1,10 +1,11 @@
-// Someone else's profile: say hi, message, report or block.
+// Someone else's profile: framed portrait, their stickers, say hi.
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
+import { GoldFrame } from '../../components/GoldFrame';
 import { ProfileDetails } from '../../components/ProfileDetails';
 import { ReportModal } from '../../components/ReportModal';
-import { Avatar, Body, Button, Card, H1, Loading, Screen } from '../../components/ui';
+import { Body, Button, H1, Loading, Screen } from '../../components/ui';
 import { useMe } from '../../lib/auth';
 import { handleError } from '../../lib/errors';
 import { supabase } from '../../lib/supabase';
@@ -43,7 +44,7 @@ export default function Person() {
   };
 
   const block = () =>
-    Alert.alert('Block this person?', 'You won’t see each other’s posts, profiles or messages.', [
+    Alert.alert('Block?', 'You won’t see each other anymore.', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Block',
@@ -55,7 +56,7 @@ export default function Person() {
       },
     ]);
 
-  if (missing) return <Screen><Body>This profile isn’t available.</Body></Screen>;
+  if (missing) return <Screen><Body>Not available.</Body></Screen>;
   if (!person) return <Loading />;
 
   const isMe = id === userId;
@@ -65,36 +66,34 @@ export default function Person() {
 
   return (
     <Screen>
-      <Stack.Screen options={{ title: person.display_name }} />
+      <Stack.Screen options={{ title: '' }} />
       <View style={{ alignItems: 'center', marginBottom: space.xl }}>
-        <Avatar name={person.display_name} url={person.avatar_url} size={104} />
+        <GoldFrame uri={person.avatar_url} name={person.display_name} width={230} />
         <H1 style={{ marginTop: space.md, textAlign: 'center' }}>
           {person.display_name}
           {person.is_plus ? ' ✦' : ''}
         </H1>
-        <Body muted>
-          {person.university} · {person.city}
-        </Body>
+        <Body muted>{person.university}</Body>
       </View>
 
       {!isMe ? (
         accepted ? (
-          <Button title="Message" onPress={() => router.push(`/dm/${id}`)} />
+          <Button title="Message" sticker="envelope" onPress={() => router.push(`/dm/${id}`)} />
         ) : theyAsked ? (
-          <Button title="Accept their hello" onPress={sayHi} />
+          <Button title="Hi back" sticker="waxheart" onPress={sayHi} />
         ) : (
-          <Button title={pending ? 'Request sent ✓' : 'Say hi'} variant={pending ? 'blue' : 'primary'} disabled={pending} onPress={sayHi} />
+          <Button title={pending ? 'Sent' : 'Say hi'} sticker="waxheart" variant={pending ? 'blue' : 'primary'} disabled={pending} onPress={sayHi} />
         )
       ) : null}
 
-      <Card style={{ marginTop: space.xl }}>
+      <View style={{ marginTop: space.xl }}>
         <ProfileDetails person={person} />
-      </Card>
+      </View>
 
       {!isMe ? (
-        <View style={{ flexDirection: 'row', gap: space.md, marginTop: space.xl }}>
-          <Button title="Report" variant="ghost" onPress={() => setReporting(true)} style={{ flex: 1 }} />
-          <Button title="Block" variant="danger" onPress={block} style={{ flex: 1 }} />
+        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: space.xl, marginTop: space.xxl }}>
+          <Body muted style={{ fontSize: 12 }} onPress={() => setReporting(true)}>report</Body>
+          <Body muted style={{ fontSize: 12 }} onPress={block}>block</Body>
         </View>
       ) : null}
       <ReportModal visible={reporting} onClose={() => setReporting(false)} reporterId={userId} targetUser={id} />

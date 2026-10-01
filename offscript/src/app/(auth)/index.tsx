@@ -1,85 +1,109 @@
-// Welcome screen: enter your university email and we send you a 6-digit code.
+// Landing page: logo, email, one button. That's it.
+// (Long-press the logo to reveal a password box — only for test accounts,
+// e.g. the one you give Apple's reviewers. See docs/SETUP_GUIDE.md.)
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Alert, View } from 'react-native';
-import { Body, Button, Input, Logo, Screen, Script } from '../../components/ui';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Animated, Easing, View } from 'react-native';
+import { Sticker } from '../../components/Sticker';
+import { Button, Input, Logo, Screen, Script, Tap } from '../../components/ui';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
-import { colors, space } from '../../lib/theme';
+import { space } from '../../lib/theme';
 
 export default function Welcome() {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
-  // Password login is only for test accounts you create (e.g. for Apple's reviewers).
   const [usePassword, setUsePassword] = useState(false);
   const [password, setPassword] = useState('');
+  const [notYet, setNotYet] = useState(false);
+
+  // the little stickers gently float
+  const float = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(float, { toValue: 1, duration: 2200, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(float, { toValue: 0, duration: 2200, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ]),
+    ).start();
+  }, [float]);
+  const bob = (dist: number, rotate = '0deg') => ({
+    transform: [{ translateY: float.interpolate({ inputRange: [0, 1], outputRange: [0, dist] }) }, { rotate }],
+  });
+
+  const sendCode = async () => {
+    const clean = email.trim().toLowerCase();
+    if (!clean.includes('@')) return;
+    if (!isSupabaseConfigured) return Alert.alert('Setup needed', 'Add your Supabase keys to .env');
+    setBusy(true);
+    setNotYet(false);
+    const { data: allowed } = await supabase.rpc('is_allowed_email', { email: clean });
+    if (!allowed) {
+      setBusy(false);
+      return setNotYet(true);
+    }
+    const { error } = await supabase.auth.signInWithOtp({ email: clean, options: { shouldCreateUser: true } });
+    setBusy(false);
+    if (error) return Alert.alert('Hmm', error.message);
+    router.push({ pathname: '/verify', params: { email: clean } });
+  };
 
   const passwordLogin = async () => {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     setBusy(false);
-    if (error) Alert.alert('Could not sign in', error.message);
-  };
-
-  const sendCode = async () => {
-    const clean = email.trim().toLowerCase();
-    if (!clean.includes('@')) return Alert.alert('Hmm', 'That doesn’t look like an email address.');
-    if (!isSupabaseConfigured) {
-      return Alert.alert('Almost there', 'Add your Supabase keys to the .env file first (see docs/SETUP_GUIDE.md).');
-    }
-    setBusy(true);
-    const { data: allowed } = await supabase.rpc('is_allowed_email', { email: clean });
-    if (!allowed) {
-      setBusy(false);
-      return Alert.alert(
-        'Not yet!',
-        'Offscript is only open to London and Cambridge universities for now. Please use your university email (e.g. name@ucl.ac.uk or abc12@cam.ac.uk).',
-      );
-    }
-    const { error } = await supabase.auth.signInWithOtp({ email: clean, options: { shouldCreateUser: true } });
-    setBusy(false);
-    if (error) return Alert.alert('Could not send code', error.message);
-    router.push({ pathname: '/verify', params: { email: clean } });
+    if (error) Alert.alert('Hmm', error.message);
   };
 
   return (
-    <Screen bg={colors.paper} style={{ flexGrow: 1, justifyContent: 'center' }}>
+    <Screen style={{ flexGrow: 1, justifyContent: 'center' }}>
       <View style={{ alignItems: 'center', marginBottom: space.xxl }}>
-        <Logo size={72} />
-        <Script style={{ fontSize: 30, marginTop: space.lg, textAlign: 'center' }}>
-          coffee runs, thesis rants & the people who get it
-        </Script>
+        <View style={{ flexDirection: 'row', gap: space.xl, marginBottom: space.md }}>
+          <Animated.View style={bob(-6, '-12deg')}>
+            <Sticker name="ticket" size={44} />
+          </Animated.View>
+          <Animated.View style={bob(5)}>
+            <Sticker name="waxheart" size={44} />
+          </Animated.View>
+          <Animated.View style={bob(-4, '10deg')}>
+            <Sticker name="coffee" size={44} />
+          </Animated.View>
+        </View>
+        <Tap onLongPress={() => setUsePassword(!usePassword)}>
+          <Logo size={76} />
+        </Tap>
       </View>
 
       <Input
-        label="Your university email"
         value={email}
-        onChangeText={setEmail}
-        placeholder="you@ucl.ac.uk"
+        onChangeText={(t) => {
+          setEmail(t);
+          setNotYet(false);
+        }}
+        placeholder="university email"
         autoCapitalize="none"
         autoComplete="email"
         keyboardType="email-address"
-        returnKeyType="send"
-        onSubmitEditing={sendCode}
+        returnKeyType="go"
+        onSubmitEditing={usePassword ? passwordLogin : sendCode}
+        style={{ textAlign: 'center' }}
       />
       {usePassword ? (
-        <>
-          <Input label="Password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />
-          <Button title="Sign in" onPress={passwordLogin} loading={busy} />
-        </>
-      ) : (
-        <Button title="Send me a login code" onPress={sendCode} loading={busy} />
-      )}
+        <Input value={password} onChangeText={setPassword} placeholder="password" secureTextEntry style={{ textAlign: 'center' }} />
+      ) : null}
 
-      <Body muted style={{ textAlign: 'center', marginTop: space.lg, fontSize: 13 }}>
-        Only for students & researchers at London and Cambridge universities. No passwords — we email you a code.
-      </Body>
-      <Body
-        muted
-        style={{ textAlign: 'center', marginTop: space.xl, fontSize: 12, textDecorationLine: 'underline' }}
-        onPress={() => setUsePassword(!usePassword)}
-      >
-        {usePassword ? 'Use an email code instead' : 'Test account? Sign in with a password'}
-      </Body>
+      {notYet ? (
+        <View style={{ alignItems: 'center', marginVertical: space.md }}>
+          <Sticker name="postcard" size={48} />
+          <Script style={{ textAlign: 'center' }}>we aren’t there yet ✿</Script>
+        </View>
+      ) : (
+        <Button
+          title={usePassword ? 'Sign in' : 'Continue'}
+          onPress={usePassword ? passwordLogin : sendCode}
+          loading={busy}
+          disabled={!email.includes('@')}
+        />
+      )}
     </Screen>
   );
 }

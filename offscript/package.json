@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo-google-fonts/courier-prime": "^0.4.1",
     "@expo-google-fonts/della-respira": "^0.4.1",
-    "@expo-google-fonts/dm-sans": "^0.4.2",
     "@expo-google-fonts/sacramento": "^0.4.1",
     "@expo-google-fonts/yesteryear": "^0.4.1",
     "@expo/vector-icons": "^15.0.2",
@@ -27,6 +27,7 @@
     "react-native-purchases": "^10.11.0",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-svg": "^15.15.4",
     "react-native-url-polyfill": "^4.0.0",
     "react-native-web": "^0.21.3"
   },

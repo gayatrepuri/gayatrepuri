@@ -146,7 +146,9 @@ A QR code appears.
 
 Your phone and laptop must be on the same Wi-Fi. If that doesn't work (e.g. on eduroam), stop it (Ctrl+C) and run `npx expo start --tunnel` instead.
 
-Now try it: enter your university email, type in the code from your inbox, answer the questions, and post a coffee run!
+Now try it: enter your university email, type in the code from your inbox, answer the questions, add a portrait, and pin a coffee run!
+
+Things to play with: swipe people left/right on **Matches**, tap the stickers on a profile (they wiggle), and press **I'm in** on a post (a wax seal stamps onto it). Screenshots of the main screens are in `docs/screens/`.
 
 **While `npx expo start` is running, every time you save a file in VS Code the app on your phone updates instantly.** Try it: open `src/lib/constants.ts`, change a word, and save.
 
@@ -190,12 +192,14 @@ offscript/
 **Easy changes you can make yourself:**
 - **Colours**: `src/lib/theme.ts`. The maroon / butter / baby-blue palette comes from your mood board (Rosewood `#6B0B0C`, Lemon Chiffon `#FFF8CA`, Botticelli `#CDE3E8`, Tamarind, Coffee Bean…).
 - **Fonts**: `src/lib/theme.ts`. They are:
-  - **Yesteryear**: the swashy logo script, like *Mimosa*.
-  - **Della Respira**: the rustic high-waisted serif headings, like *Brioche*.
-  - **Sacramento**: the thin handwritten accents, like *cove.*
-  - **DM Sans**: the clean wide body text, like *CRÊPERIE*.
+  - **Yesteryear**: the "Offscript" wordmark, like *Mimosa*.
+  - **Della Respira**: headings only, like *Brioche*.
+  - **Courier Prime**: a typewriter font for everything else.
+  - **Sacramento**: the occasional handwritten touch ("we aren't there yet ✿").
 
   All are free Google Fonts. If you buy Brioche itself, put the `.otf` file in `assets/fonts/` and ask an AI assistant to "swap the heading font for this file".
+- **Icons ("stickers")**: `src/components/Sticker.tsx`. They're drawn in code in the style of your mood board (wax seals, ticket stubs, postcards, a vinyl record, a bunny…), so they stay sharp at any size. Which sticker goes with which profile answer or post type is set in `src/lib/constants.ts` (e.g. favourite song → `headphones`, dream destination → `postcard`). Pictures of every sticker are in `docs/screens/stickers.png`.
+- **Photos**: people add a portrait during sign-up (or later in Edit), and it's shown in an ornate gold frame (`src/components/GoldFrame.tsx`).
 - **Post types, examples, research fields, interest tags, onboarding questions**: `src/lib/constants.ts`.
 - **Allowed universities**: Supabase → **Table Editor → universities → Insert row**.
 - **Free-plan limits**: Supabase → **Table Editor → plan_limits**.
@@ -287,8 +291,8 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 - **A demo account for the reviewer.** They can't receive codes at a uni email, so:
   1. Supabase → Table Editor → `allowed_emails` → insert a row with `reviewer@yourdomain.com`.
   2. Supabase → **Authentication → Users → Add user → Create new user**, using that email, a password and **Auto Confirm User** ✅.
-  3. Log in once yourself (welcome screen → "Test account? Sign in with a password") and finish the questions.
-  4. Give that email and password to Apple and Google in the review notes.
+  3. Log in once yourself: on the landing page, **press and hold the Offscript logo**, and a password box appears. Then finish the questions.
+  4. Give that email and password to Apple and Google in the review notes, with this line: "Press and hold the Offscript logo on the first screen to show the password field." 
 - **Age rating**: the app has user chat and meetups, so answer the questionnaire honestly. Expect **17+ / Mature**. Say users must be 18+ in your terms.
 - **Screenshots**: run the app, take screenshots on your phone (6.7" iPhone and an Android phone), and upload them.
 - **App Privacy "nutrition label"** (Apple): Contact info (email), User content (photos, messages, other), Identifiers (user ID), all **linked to the user**, **not used for tracking**.
@@ -327,7 +331,7 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 |---|---|
 | "Add your Supabase keys" message | The `.env` file is missing or misnamed (it must be exactly `.env`). Stop the app with Ctrl+C and run `npx expo start --clear`. |
 | No code email | Check junk. Check step 5 (template has `{{ .Token }}`). The built-in Supabase email is rate-limited, so set up Resend. |
-| "Only open to London and Cambridge" | That email domain isn't in `universities`. Add it. |
+| "we aren't there yet" on the landing page | That email domain isn't in `universities`. Add it (Table Editor → universities). |
 | Phone can't connect to the QR code | Use `npx expo start --tunnel`. |
 | Weird errors after installing something | `npx expo install --fix`, then `npx expo start --clear`. |
 | "Time to go Plus?" popup while testing | You hit a free limit. Set `is_plus = true` on your profile, or raise `plan_limits`. |

@@ -5,7 +5,7 @@
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- 1. Universities we allow (London + Cambridge only)
+-- 1. Universities we allow (currently London + Cambridge; never shown in the app)
 --    Sign-up is only possible with an email ending in one of these domains.
 -- ---------------------------------------------------------------------
 create table public.universities (
@@ -174,7 +174,7 @@ declare
 begin
   uni := public.university_for_email(new.email);
   if uni.domain is null then
-    raise exception 'Offscript is only open to London and Cambridge university emails for now.';
+    raise exception 'We aren''t there yet.';
   end if;
   insert into public.profiles (id, email_domain, university, city)
   values (new.id, uni.domain, uni.name, uni.city);

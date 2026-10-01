@@ -4,10 +4,10 @@ import { router } from 'expo-router';
 import { Alert } from 'react-native';
 
 const LIMIT_MESSAGES: Record<string, string> = {
-  posts_per_month: "You've used this month's free posts.",
-  joins_per_month: "You've joined this month's free meetups.",
-  connections_per_week: "You've sent this week's free match requests.",
-  hosted_events_active: 'Free accounts can host one upcoming event at a time.',
+  posts_per_month: "That's this month's free posts.",
+  joins_per_month: "That's this month's free joins.",
+  connections_per_week: "That's this week's free hellos.",
+  hosted_events_active: 'One event at a time on free.',
 };
 
 export function handleError(error: { message?: string } | null | undefined) {
@@ -15,12 +15,12 @@ export function handleError(error: { message?: string } | null | undefined) {
   const msg = error.message ?? 'Something went wrong.';
   const limit = msg.match(/FREE_LIMIT:(\w+)/)?.[1];
   if (limit) {
-    Alert.alert('Time to go Plus?', `${LIMIT_MESSAGES[limit] ?? "You've hit a free limit."} Upgrade to Offscript Plus for unlimited everything.`, [
+    Alert.alert('Go Plus ✦', LIMIT_MESSAGES[limit] ?? 'Free limit reached.', [
       { text: 'Not now', style: 'cancel' },
       { text: 'See Plus', onPress: () => router.push('/plus') },
     ]);
   } else {
-    Alert.alert('Oops', msg);
+    Alert.alert('Hmm', msg);
   }
   return true;
 }
