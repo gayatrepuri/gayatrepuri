@@ -1,0 +1,32 @@
+// Connects the app to your Supabase database.
+// The two values come from the .env file (see docs/SETUP_GUIDE.md, step 3).
+import 'react-native-url-polyfill/auto';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createClient } from '@supabase/supabase-js';
+import { AppState, Platform } from 'react-native';
+
+const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+export const isSupabaseConfigured = Boolean(url && anonKey);
+
+export const supabase = createClient(
+  url ?? 'https://placeholder.supabase.co',
+  anonKey ?? 'placeholder-key',
+  {
+    auth: {
+      storage: Platform.OS === 'web' && typeof window === 'undefined' ? undefined : AsyncStorage,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+    },
+  },
+);
+
+// Keep the login fresh only while the app is open on screen.
+if (Platform.OS !== 'web') {
+  AppState.addEventListener('change', (state) => {
+    if (state === 'active') supabase.auth.startAutoRefresh();
+    else supabase.auth.stopAutoRefresh();
+  });
+}
