@@ -54,18 +54,36 @@ insert into public.universities (domain, name, city) values
   ('rcm.ac.uk',         'Royal College of Music',             'London'),
   ('crick.ac.uk',       'Francis Crick Institute',            'London');
 
+-- Individual emails you let in even without a university address — e.g. the
+-- test account you give Apple / Google reviewers (docs/SETUP_GUIDE.md, step 9).
+insert into public.universities (domain, name, city) values
+  ('offscript.team', 'Offscript Team', 'London');
+create table public.allowed_emails (
+  email  text primary key,
+  domain text not null default 'offscript.team' references public.universities(domain)
+);
+alter table public.allowed_emails enable row level security; -- no policies: dashboard only
+
 -- Find the university for an email address. Subdomains count too,
 -- so 'jo@student.kcl.ac.uk' and 'jo@cantab.cam.ac.uk' both work.
 create or replace function public.university_for_email(email text)
 returns public.universities
 language sql stable
+security definer
 set search_path = public
 as $$
-  select u.*
-  from public.universities u
-  where lower(split_part(email, '@', 2)) = u.domain
-     or lower(split_part(email, '@', 2)) like '%.' || u.domain
-  order by length(u.domain) desc
+  -- ($1 is the email passed in; written as $1 so it can't be confused with a column)
+  select m.domain, m.name, m.city from (
+    select u.domain, u.name, u.city, 0 as rank, 0 as len
+    from public.allowed_emails a join public.universities u on u.domain = a.domain
+    where a.email = lower($1)
+    union all
+    select u.domain, u.name, u.city, 1, length(u.domain)
+    from public.universities u
+    where lower(split_part($1, '@', 2)) = u.domain
+       or lower(split_part($1, '@', 2)) like '%.' || u.domain
+  ) m
+  order by m.rank, m.len desc
   limit 1;
 $$;
 
@@ -76,7 +94,7 @@ returns boolean
 language sql stable
 set search_path = public
 as $$
-  select (public.university_for_email(email)).domain is not null;
+  select (public.university_for_email($1)).domain is not null;
 $$;
 grant execute on function public.is_allowed_email(text) to anon, authenticated;
 
