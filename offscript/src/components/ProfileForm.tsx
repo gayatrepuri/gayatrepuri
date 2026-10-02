@@ -72,10 +72,11 @@ async function pickAndUpload(userId: string) {
   if (result.canceled) return null;
   const asset = result.assets[0];
   const bytes = await (await fetch(asset.uri)).arrayBuffer();
-  const path = `${userId}/photo-${Date.now()}.jpg`;
-  const { error } = await supabase.storage
-    .from('avatars')
-    .upload(path, bytes, { contentType: asset.mimeType ?? 'image/jpeg', upsert: true });
+  const type = asset.mimeType ?? 'image/jpeg';
+  const ext = type.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg';
+  // every upload gets a new file name, so we never need to overwrite one
+  const path = `${userId}/photo-${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from('avatars').upload(path, bytes, { contentType: type });
   if (error) throw error;
   return supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
 }
