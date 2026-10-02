@@ -3,7 +3,8 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { Alert, Switch, View } from 'react-native';
-import { DEGREE_STAGES, FUN_QUESTIONS, INTEREST_TAGS, RESEARCH_FIELDS, VISIBILITY_OPTIONS } from '../lib/constants';
+import { DEGREE_STAGES, FUN_QUESTIONS, RESEARCH_FIELDS, VISIBILITY_OPTIONS } from '../lib/constants';
+import { InterestPicker } from './InterestPicker';
 import { supabase } from '../lib/supabase';
 import { colors, space } from '../lib/theme';
 import type { Profile } from '../lib/types';
@@ -167,11 +168,7 @@ export function ProfileSection({ section, draft, setDraft, userId }: Props) {
           placeholder="Why bees prefer some flowers"
         />
         <Label>Interests</Label>
-        <ChipRow>
-          {INTEREST_TAGS.map((t) => (
-            <Chip key={t} label={t} selected={draft.interests.includes(t)} onPress={() => toggleIn('interests', t)} />
-          ))}
-        </ChipRow>
+        <InterestPicker selected={draft.interests} onToggle={(t) => toggleIn('interests', t)} />
         <View style={{ height: space.lg }} />
         <Input label="About" value={draft.bio ?? ''} onChangeText={(t) => set('bio', t || null)} placeholder="Will trade stats help for cake." multiline maxLength={300} />
       </View>

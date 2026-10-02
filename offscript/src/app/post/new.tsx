@@ -5,7 +5,8 @@ import { ScrollView, Text, View } from 'react-native';
 import { Sticker } from '../../components/Sticker';
 import { Button, Chip, ChipRow, H1, Input, Label, Screen, Tap } from '../../components/ui';
 import { useMe } from '../../lib/auth';
-import { INTEREST_TAGS, POST_KINDS } from '../../lib/constants';
+import { InterestPicker } from '../../components/InterestPicker';
+import { POST_KINDS } from '../../lib/constants';
 import { handleError } from '../../lib/errors';
 import { supabase } from '../../lib/supabase';
 import { colors, fonts, radius, space } from '../../lib/theme';
@@ -129,17 +130,11 @@ export default function NewPost() {
       />
 
       <Label>Tags</Label>
-      <ChipRow>
-        {INTEREST_TAGS.map((t) => (
-          <Chip
-            key={t}
-            label={t}
-            small
-            selected={tags.includes(t)}
-            onPress={() => setTags(tags.includes(t) ? tags.filter((x) => x !== t) : [...tags, t].slice(0, 5))}
-          />
-        ))}
-      </ChipRow>
+      <InterestPicker
+        selected={tags}
+        max={5}
+        onToggle={(t) => setTags(tags.includes(t) ? tags.filter((x) => x !== t) : [...tags, t])}
+      />
 
       <Button
         title="Pin it"

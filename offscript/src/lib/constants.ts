@@ -44,28 +44,98 @@ export const RESEARCH_FIELDS = [
   'Chemistry',
   'Biology & Life Sciences',
   'Medicine & Health',
-  'Neuroscience & Psychology',
-  'Earth & Environment',
-  'Economics & Business',
+  'Public Health',
+  'Neuroscience',
+  'Psychology',
+  'Environmental Science',
+  'Earth Sciences & Geography',
+  'Economics',
+  'Business & Management',
   'Law',
   'Politics & International Relations',
   'Sociology & Anthropology',
+  'Education',
   'History',
+  'Archaeology & Classics',
   'Philosophy',
+  'Theology & Religious Studies',
   'Literature & Languages',
+  'Linguistics',
+  'Media & Communications',
   'Art, Design & Architecture',
   'Music & Performance',
-  'Education',
+  'Film & Cultural Studies',
   'Something else',
 ];
 
-export const INTEREST_TAGS = [
-  'machine learning', 'climate', 'quantum', 'genetics', 'public health', 'policy',
-  'qualitative methods', 'stats help', 'R / Python', 'LaTeX', 'writing support',
-  'startups', 'podcasting', 'science comms', 'teaching', 'open science',
-  'coffee', 'running', 'climbing', 'films', 'live music', 'museums', 'board games',
-  'cooking', 'pub quizzes', 'books', 'yoga', 'formal halls', 'travel', 'art',
+// Interests, grouped so the long list stays easy to browse (there's a search box too).
+export const INTEREST_GROUPS: { title: string; tags: string[] }[] = [
+  {
+    title: 'Sciences',
+    tags: [
+      'physics', 'quantum physics', 'astrophysics', 'astronomy', 'particle physics', 'condensed matter',
+      'chemistry', 'organic chemistry', 'biochemistry', 'materials science', 'nanotechnology',
+      'mathematics', 'pure maths', 'applied maths', 'statistics', 'biology', 'molecular biology',
+      'cell biology', 'microbiology', 'genetics', 'genomics', 'evolution', 'ecology', 'zoology',
+      'botany', 'marine biology', 'neuroscience', 'immunology', 'pharmacology', 'environmental science',
+      'climate science', 'earth sciences', 'geology', 'oceanography', 'meteorology', 'sustainability',
+      'conservation', 'agriculture', 'food science',
+    ],
+  },
+  {
+    title: 'Tech & engineering',
+    tags: [
+      'computer science', 'artificial intelligence', 'machine learning', 'data science', 'robotics',
+      'cybersecurity', 'human-computer interaction', 'software engineering', 'electrical engineering',
+      'mechanical engineering', 'civil engineering', 'chemical engineering', 'biomedical engineering',
+      'aerospace', 'energy & renewables', 'architecture', 'urban planning', 'design',
+    ],
+  },
+  {
+    title: 'Health',
+    tags: [
+      'medicine', 'public health', 'epidemiology', 'global health', 'nursing', 'psychiatry',
+      'mental health', 'nutrition', 'sports science', 'dentistry', 'veterinary science',
+    ],
+  },
+  {
+    title: 'Social sciences',
+    tags: [
+      'psychology', 'cognitive science', 'sociology', 'anthropology', 'economics', 'behavioural economics',
+      'finance', 'business & management', 'politics', 'international relations', 'public policy', 'law',
+      'human rights', 'criminology', 'development studies', 'gender studies', 'geography', 'education',
+      'social work', 'migration studies', 'media & communications',
+    ],
+  },
+  {
+    title: 'Humanities',
+    tags: [
+      'history', 'art history', 'archaeology', 'classics', 'philosophy', 'ethics', 'religious studies',
+      'theology', 'literature', 'english', 'creative writing', 'linguistics', 'modern languages',
+      'film studies', 'music', 'theatre & performance', 'cultural studies', 'museum studies',
+    ],
+  },
+  {
+    title: 'Skills & methods',
+    tags: [
+      'qualitative methods', 'quantitative methods', 'stats help', 'R / Python', 'LaTeX', 'writing support',
+      'lab techniques', 'fieldwork', 'interviews & surveys', 'grant writing', 'teaching', 'science comms',
+      'open science', 'academic publishing', 'presenting',
+    ],
+  },
+  {
+    title: 'Beyond the thesis',
+    tags: [
+      'startups', 'podcasting', 'coffee', 'running', 'climbing', 'cycling', 'swimming', 'yoga', 'gym',
+      'football', 'rowing', 'hiking', 'dancing', 'films', 'live music', 'museums', 'theatre', 'board games',
+      'gaming', 'cooking', 'baking', 'pub quizzes', 'books', 'poetry', 'photography', 'art', 'crafts',
+      'travel', 'languages', 'volunteering', 'choir', 'formal halls',
+    ],
+  },
 ];
+
+// every interest in one list (used for post tags)
+export const INTEREST_TAGS = [...new Set(INTEREST_GROUPS.flatMap((g) => g.tags))];
 
 // The onboarding questions. `key` matches a column in the profiles table.
 export const FUN_QUESTIONS: { key: FunKey; label: string; placeholder: string; sticker: StickerName }[] = [
