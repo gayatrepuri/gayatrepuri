@@ -1,9 +1,5 @@
 // The "frame" around the whole app: loads fonts, keeps track of who is
 // logged in, and decides which screens they're allowed to see.
-import { RammettoOne_400Regular } from '@expo-google-fonts/rammetto-one';
-import { CourierPrime_400Regular, CourierPrime_400Regular_Italic, CourierPrime_700Bold } from '@expo-google-fonts/courier-prime';
-import { Sacramento_400Regular } from '@expo-google-fonts/sacramento';
-import { MrsSaintDelafield_400Regular } from '@expo-google-fonts/mrs-saint-delafield';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -17,15 +13,17 @@ SplashScreen.preventAutoHideAsync();
 
 function RootStack() {
   const { session, profile, loading } = useAuth();
-  const [fontsLoaded] = useFonts({
-    MrsSaintDelafield_400Regular,
-    RammettoOne_400Regular,
-    Sacramento_400Regular,
-    CourierPrime_400Regular,
-    CourierPrime_400Regular_Italic,
-    CourierPrime_700Bold,
+  // fonts live in assets/fonts (so the web version can find them too)
+  const [fontsLoaded, fontError] = useFonts({
+    MrsSaintDelafield_400Regular: require('../../assets/fonts/MrsSaintDelafield_400Regular.ttf'),
+    RammettoOne_400Regular: require('../../assets/fonts/RammettoOne_400Regular.ttf'),
+    Sacramento_400Regular: require('../../assets/fonts/Sacramento_400Regular.ttf'),
+    CourierPrime_400Regular: require('../../assets/fonts/CourierPrime_400Regular.ttf'),
+    CourierPrime_400Regular_Italic: require('../../assets/fonts/CourierPrime_400Regular_Italic.ttf'),
+    CourierPrime_700Bold: require('../../assets/fonts/CourierPrime_700Bold.ttf'),
   });
-  const ready = fontsLoaded && !loading;
+  // if a font ever fails to load, carry on with standard fonts rather than a blank screen
+  const ready = (fontsLoaded || fontError != null) && !loading;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();

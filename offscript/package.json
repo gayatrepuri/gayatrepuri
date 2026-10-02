@@ -44,7 +44,7 @@
     "typecheck": "tsc --noEmit",
     "dev-build": "expo start --dev-client",
     "tunnel": "expo start --go --tunnel",
-    "build:web": "expo export --platform web"
+    "build:web": "expo export --platform web && node scripts/fix-web-build.mjs"
   },
   "private": true
 }
