@@ -11,13 +11,13 @@ export const POST_KINDS: {
 }[] = [
   { kind: 'coffee', label: 'Coffee run', sticker: 'coffee', example: "Jack's Gelato after lab — chat physics?" },
   { kind: 'study', label: 'Work together', sticker: 'books', example: 'Thesis writing at Waterstones, join?' },
-  { kind: 'event', label: 'Event', sticker: 'vinyl', example: 'Movie night, grad common room, Friday' },
+  { kind: 'event', label: 'Event', sticker: 'discoball', example: 'Movie night, grad common room, Friday' },
   { kind: 'rant', label: 'Rant', sticker: 'matchbook', example: 'Chapter 3 is eating me alive. Pub?' },
-  { kind: 'collab', label: 'Ideas', sticker: 'waxseal', example: 'Starting a science podcast — co-hosts?' },
+  { kind: 'collab', label: 'Ideas', sticker: 'key', example: 'Starting a science podcast — co-hosts?' },
   { kind: 'ticket', label: 'Spare ticket', sticker: 'ticket', example: 'Extra formal hall ticket, Thursday' },
   { kind: 'study_participants', label: 'Participants', sticker: 'envelope', example: '20-min user study, £10 voucher' },
   { kind: 'conference', label: 'Conference buddy', sticker: 'postcard', example: 'Going to NeurIPS alone — anyone?' },
-  { kind: 'other', label: 'Other', sticker: 'button', example: 'Anything off the script' },
+  { kind: 'other', label: 'Other', sticker: 'seashell', example: 'Anything off the script' },
 ];
 
 export const kindInfo = (kind: PostKind) =>
@@ -104,6 +104,6 @@ export const PLUS_PERKS: { text: string; sticker: StickerName }[] = [
   { text: 'Join anything', sticker: 'ticket' },
   { text: 'Unlimited hellos', sticker: 'envelope' },
   { text: 'See every match', sticker: 'waxheart' },
-  { text: 'Host more events', sticker: 'vinyl' },
-  { text: 'A little ✦ badge', sticker: 'sparkle' },
+  { text: 'Host more events', sticker: 'champagne' },
+  { text: 'A little ✦ badge', sticker: 'star' },
 ];

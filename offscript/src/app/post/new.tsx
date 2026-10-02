@@ -96,7 +96,7 @@ export default function NewPost() {
         })}
       </View>
 
-      <Input value={title} onChangeText={setTitle} placeholder={example} maxLength={120} style={{ fontFamily: fonts.heading, fontSize: 18 }} />
+      <Input value={title} onChangeText={setTitle} placeholder={example} maxLength={120} style={{ fontFamily: fonts.heading, fontSize: 16 }} />
       <Input value={location} onChangeText={setLocation} placeholder="where?" />
 
       <Label>When</Label>

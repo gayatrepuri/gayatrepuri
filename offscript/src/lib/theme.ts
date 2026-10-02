@@ -30,7 +30,7 @@ export const colors = {
 
 export const fonts = {
   logo: 'MrsSaintDelafield_400Regular', // pen calligraphy for the wordmark, like "Villa D'Cipoletti"
-  heading: 'DellaRespira_400Regular', // headings, like "Brioche"
+  heading: 'RammettoOne_400Regular', // bold flared headings, like "Sunborn"
   script: 'Sacramento_400Regular', // little handwritten accents
   body: 'CourierPrime_400Regular', // typewriter for everything else
   bodyBold: 'CourierPrime_700Bold',

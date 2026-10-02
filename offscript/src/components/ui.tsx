@@ -286,8 +286,8 @@ export function Loading() {
 }
 
 export const styles = StyleSheet.create({
-  h1: { fontFamily: fonts.heading, fontSize: 32, color: colors.maroon, letterSpacing: 1 },
-  h2: { fontFamily: fonts.heading, fontSize: 22, color: colors.maroon, letterSpacing: 0.5 },
+  h1: { fontFamily: fonts.heading, fontSize: 26, color: colors.maroon, lineHeight: 34 },
+  h2: { fontFamily: fonts.heading, fontSize: 18, color: colors.maroon, lineHeight: 25 },
   script: { fontFamily: fonts.script, fontSize: 26, color: colors.maroonSoft },
   body: { fontFamily: fonts.body, fontSize: 14, color: colors.coffee, lineHeight: 20 },
   label: {

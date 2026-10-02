@@ -212,13 +212,13 @@ offscript/
 - **Colours**: `src/lib/theme.ts`. The maroon / butter / baby-blue palette comes from your mood board (Rosewood `#6B0B0C`, Lemon Chiffon `#FFF8CA`, Botticelli `#CDE3E8`, Tamarind, Coffee Bean…).
 - **Fonts**: `src/lib/theme.ts`. They are:
   - **Mrs Saint Delafield**: the "Offscript" wordmark, a pen calligraphy like *Villa D'Cipoletti*.
-  - **Della Respira**: headings only, like *Brioche*.
+  - **Rammetto One**: bold flared headings, like *Sunborn*.
   - **Courier Prime**: a typewriter font for everything else.
   - **Sacramento**: the occasional handwritten touch ("we aren't there yet ✿").
 
   All are free Google Fonts. If you buy Brioche itself, put the `.otf` file in `assets/fonts/` and ask an AI assistant to "swap the heading font for this file".
-- **Icons ("stickers")**: `src/components/Sticker.tsx`. They're drawn in code in the style of your mood board (wax seals, ticket stubs, postcards, a vinyl record, a bunny…), so they stay sharp at any size. Which sticker goes with which profile answer or post type is set in `src/lib/constants.ts` (e.g. favourite song → `headphones`, dream destination → `postcard`). Pictures of every sticker are in `docs/screens/stickers.png`.
-- **Photos**: people add a portrait during sign-up (or later in Edit), and it's shown in an ornate gold frame (`src/components/GoldFrame.tsx`).
+- **Icons ("stickers")**: realistic sticker images in `assets/stickers/` (wax seals, ticket stubs, postcards, a disco ball, champagne, a gold key…), with lighting, texture and shadows. Which sticker goes with which profile answer or post type is set in `src/lib/constants.ts` (e.g. favourite song → `headphones`, dream destination → `postcard`). Pictures of every sticker are in `docs/screens/stickers.png`. **To use a real photo sticker instead** (e.g. one you've bought from Creative Market or Etsy with a commercial licence), save it as a square PNG with a transparent background and the same file name, replacing the old one in `assets/stickers/`.
+- **Photos**: people add a portrait during sign-up (or later in Edit), and it's shown in an ornate gold frame (`src/components/GoldFrame.tsx`, image `assets/frame.png`).
 - **Post types, examples, research fields, interest tags, onboarding questions**: `src/lib/constants.ts`.
 - **Allowed universities**: Supabase → **Table Editor → universities → Insert row**.
 - **Free-plan limits**: Supabase → **Table Editor → plan_limits**.

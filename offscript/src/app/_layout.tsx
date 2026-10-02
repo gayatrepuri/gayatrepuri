@@ -1,6 +1,6 @@
 // The "frame" around the whole app: loads fonts, keeps track of who is
 // logged in, and decides which screens they're allowed to see.
-import { DellaRespira_400Regular } from '@expo-google-fonts/della-respira';
+import { RammettoOne_400Regular } from '@expo-google-fonts/rammetto-one';
 import { CourierPrime_400Regular, CourierPrime_400Regular_Italic, CourierPrime_700Bold } from '@expo-google-fonts/courier-prime';
 import { Sacramento_400Regular } from '@expo-google-fonts/sacramento';
 import { MrsSaintDelafield_400Regular } from '@expo-google-fonts/mrs-saint-delafield';
@@ -18,7 +18,7 @@ function RootStack() {
   const { session, profile, loading } = useAuth();
   const [fontsLoaded] = useFonts({
     MrsSaintDelafield_400Regular,
-    DellaRespira_400Regular,
+    RammettoOne_400Regular,
     Sacramento_400Regular,
     CourierPrime_400Regular,
     CourierPrime_400Regular_Italic,

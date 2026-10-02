@@ -17,7 +17,7 @@ Sign-up needs a **university email** (e.g. `@ucl.ac.uk`, `@cam.ac.uk`). New memb
 
 The landing page is a maroon envelope on a baby-blue gingham tablecloth: the flap opens, and a torn-edged letter pinned with a gold wax seal slides out with *Offscript* and the email box on it ([frames](docs/screens/landing-animation.png)).
 
-The look: maroon, butter yellow and baby blue, Brioche-style headings, typewriter text, and scrapbook stickers. Matches is a swipe deck, posts are pinned like scraps on a board, and joining a meetup stamps a wax seal.
+The look: maroon, butter yellow and baby blue, bold flared headings, typewriter text, and realistic scrapbook stickers (wax seals, ticket stubs, a disco ball…). Matches is a swipe deck, posts are pinned like scraps on a board, and joining a meetup stamps a wax seal.
 
 | | | |
 |---|---|---|

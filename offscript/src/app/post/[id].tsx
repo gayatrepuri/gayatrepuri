@@ -89,7 +89,7 @@ export default function PostDetail() {
     <Screen>
       <View>
         <Card tone="cream" tilt={tiltFor(post.id)} style={{ paddingTop: space.xl, marginTop: space.lg }}>
-          <H1 style={{ fontSize: 28, paddingRight: 40 }}>{post.title}</H1>
+          <H1 style={{ fontSize: 22, lineHeight: 30, paddingRight: 40 }}>{post.title}</H1>
           <Body muted style={{ marginTop: space.sm }}>
             {formatWhen(post.starts_at)}
             {post.location ? `\n${post.location}` : ''}

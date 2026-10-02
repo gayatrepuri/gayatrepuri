@@ -34,7 +34,7 @@ export function PostCard({ post }: { post: FeedPost }) {
   return (
     <View style={{ marginBottom: space.xl, marginTop: space.sm }}>
       <Card tone={TONES[post.kind]} tilt={tiltFor(post.id)} onPress={() => router.push(`/post/${post.id}`)} style={{ paddingTop: space.xl }}>
-        <Text style={{ fontFamily: fonts.heading, fontSize: 21, color: colors.tamarind, marginBottom: 6, paddingRight: 30 }}>
+        <Text style={{ fontFamily: fonts.heading, fontSize: 18, lineHeight: 25, color: colors.tamarind, marginBottom: 6, paddingRight: 30 }}>
           {post.title}
         </Text>
         <Body muted style={{ fontSize: 12 }}>

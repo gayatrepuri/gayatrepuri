@@ -55,7 +55,7 @@ export default function Plus() {
   return (
     <Screen bg={colors.maroon}>
       <View style={{ alignItems: 'center', marginTop: space.xl }}>
-        <Sticker name="sparkle" size={64} />
+        <Sticker name="star" size={72} />
         <Logo size={58} color={colors.butter} />
         <H1 style={{ color: colors.butter, marginTop: -space.sm }}>Plus</H1>
       </View>
