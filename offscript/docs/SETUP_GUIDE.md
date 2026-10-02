@@ -192,7 +192,7 @@ offscript/
 **Easy changes you can make yourself:**
 - **Colours**: `src/lib/theme.ts`. The maroon / butter / baby-blue palette comes from your mood board (Rosewood `#6B0B0C`, Lemon Chiffon `#FFF8CA`, Botticelli `#CDE3E8`, Tamarind, Coffee Bean…).
 - **Fonts**: `src/lib/theme.ts`. They are:
-  - **Yesteryear**: the "Offscript" wordmark, like *Mimosa*.
+  - **Mrs Saint Delafield**: the "Offscript" wordmark, a pen calligraphy like *Villa D'Cipoletti*, shown inside a scalloped frame (`src/components/LogoFrame.tsx`).
   - **Della Respira**: headings only, like *Brioche*.
   - **Courier Prime**: a typewriter font for everything else.
   - **Sacramento**: the occasional handwritten touch ("we aren't there yet ✿").

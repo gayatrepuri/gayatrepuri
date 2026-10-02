@@ -3,7 +3,7 @@
 import { DellaRespira_400Regular } from '@expo-google-fonts/della-respira';
 import { CourierPrime_400Regular, CourierPrime_400Regular_Italic, CourierPrime_700Bold } from '@expo-google-fonts/courier-prime';
 import { Sacramento_400Regular } from '@expo-google-fonts/sacramento';
-import { Yesteryear_400Regular } from '@expo-google-fonts/yesteryear';
+import { MrsSaintDelafield_400Regular } from '@expo-google-fonts/mrs-saint-delafield';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -17,7 +17,7 @@ SplashScreen.preventAutoHideAsync();
 function RootStack() {
   const { session, profile, loading } = useAuth();
   const [fontsLoaded] = useFonts({
-    Yesteryear_400Regular,
+    MrsSaintDelafield_400Regular,
     DellaRespira_400Regular,
     Sacramento_400Regular,
     CourierPrime_400Regular,

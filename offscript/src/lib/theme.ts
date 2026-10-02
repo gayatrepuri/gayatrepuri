@@ -29,7 +29,7 @@ export const colors = {
 };
 
 export const fonts = {
-  logo: 'Yesteryear_400Regular', // swashy script for the wordmark, like "Mimosa"
+  logo: 'MrsSaintDelafield_400Regular', // pen calligraphy for the wordmark, like "Villa D'Cipoletti"
   heading: 'DellaRespira_400Regular', // headings, like "Brioche"
   script: 'Sacramento_400Regular', // little handwritten accents
   body: 'CourierPrime_400Regular', // typewriter for everything else

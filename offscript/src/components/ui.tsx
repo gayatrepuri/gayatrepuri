@@ -20,6 +20,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, radius, space } from '../lib/theme';
 import { GoldAvatar } from './GoldFrame';
+import { LogoFrame } from './LogoFrame';
 import { Sticker, type StickerName } from './Sticker';
 
 export function haptic(kind: 'light' | 'success' = 'light') {
@@ -95,12 +96,12 @@ export function Screen({
   );
 }
 
-/** The "Offscript" wordmark. */
+/** The "Offscript" wordmark in its scalloped frame. `size` ≈ the letter height. */
 export function Logo({ size = 56, color = colors.maroon }: { size?: number; color?: string }) {
   return (
-    <Text style={{ fontFamily: fonts.logo, fontSize: size, color, lineHeight: size * 1.35, textAlign: 'center' }}>
-      Offscript
-    </Text>
+    <View style={{ alignItems: 'center' }}>
+      <LogoFrame width={size * 4} color={color} />
+    </View>
   );
 }
 

@@ -19,6 +19,8 @@ import {
 } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { Gingham } from '../../components/Gingham';
+import { LogoFrame } from '../../components/LogoFrame';
+import { TornPaper, tornPath } from '../../components/TornPaper';
 import { Sticker } from '../../components/Sticker';
 import { Button, Script, styles as ui, Tap } from '../../components/ui';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
@@ -52,6 +54,7 @@ export default function Welcome() {
   const envY = useRef(new Animated.Value(0)).current;
   const unfold = useRef(new Animated.Value(0)).current; // second fold: 0 = folded, 1 = open
   const caret = useRef(new Animated.Value(1)).current;
+  const frameIn = useRef(new Animated.Value(0)).current; // scalloped frame around the word
   const [flapOpen, setFlapOpen] = useState(false);
   const [letterOut, setLetterOut] = useState(false);
   const [typed, setTyped] = useState(0);
@@ -86,7 +89,7 @@ export default function Welcome() {
         setTyped(i);
         await wait(110);
       }
-      await wait(350);
+      await play(Animated.timing(frameIn, { toValue: 1, duration: 600, useNativeDriver: true }));
       if (!alive) return;
       // 3. letter comes fully out, envelope drops behind it, second fold opens
       setLetterOut(true);
@@ -187,23 +190,39 @@ export default function Welcome() {
               transform: [{ translateY: letterY }],
             }}
           >
-            {/* top panel: the typed word */}
-            <View style={[paper, { height: P1, alignItems: 'center', justifyContent: 'center' }]}>
+            {/* top panel: the typed word, then its scalloped frame */}
+            <TornPaper width={LW} height={P1} edges={{ top: true, left: true, right: true }} seed={3} style={{ alignItems: 'center', justifyContent: 'center' }}>
               <Tap onLongPress={() => setUsePassword(!usePassword)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{ fontFamily: fonts.logo, fontSize: LW * 0.2, color: colors.maroon, lineHeight: LW * 0.28 }}>
-                    {typedWord || ' '}
-                  </Text>
-                  {!ready ? (
-                    <Animated.Text style={{ opacity: caret, fontFamily: fonts.body, fontSize: LW * 0.12, color: colors.maroon }}>|</Animated.Text>
-                  ) : null}
-                </View>
+                <LogoFrame width={Math.min(LW * 0.82, (P1 / 0.66) * 0.96)} frameOpacity={frameIn}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -P1 * 0.06 }}>
+                    <Text style={{ fontFamily: fonts.logo, fontSize: LW * 0.17, color: colors.maroon, lineHeight: LW * 0.26 }}>
+                      {typedWord || ' '}
+                    </Text>
+                    {!ready ? (
+                      <Animated.Text style={{ opacity: caret, fontFamily: fonts.body, fontSize: LW * 0.1, color: colors.maroon }}>|</Animated.Text>
+                    ) : null}
+                  </View>
+                </LogoFrame>
               </Tap>
-            </View>
+            </TornPaper>
+            {/* gold wax seal holding the letter (appears once it's out of the envelope) */}
+            <Animated.View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: -20,
+                left: LW / 2 - 22,
+                opacity: letterY.interpolate({ inputRange: [risen, risen * 0.4], outputRange: [1, 0], extrapolate: 'clamp' }),
+              }}
+            >
+              <Sticker name="goldseal" size={44} />
+            </Animated.View>
 
             {/* second fold: opens downward and asks for your email */}
             <Animated.View style={{ height: P2, transform: aroundTop(P2, unfold) }}>
-              <View style={[paper, { height: P2, padding: space.lg, justifyContent: 'center', borderTopWidth: 1, borderTopColor: '#D8C9AA' }]}>
+              <TornPaper width={LW} height={P2} edges={{ left: true, right: true, bottom: true }} seed={5} style={{ padding: space.lg, justifyContent: 'center' }}>
+                {/* the fold crease */}
+                <View style={{ position: 'absolute', top: 0, left: 4, right: 4, height: 1, backgroundColor: '#D8C9AA' }} />
                 <TextInput
                   ref={inputRef}
                   value={email}
@@ -244,20 +263,16 @@ export default function Welcome() {
                     disabled={!email.includes('@')}
                   />
                 )}
-              </View>
+              </TornPaper>
               {/* a soft shadow that lifts as the fold opens */}
               <Animated.View
                 pointerEvents="none"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: colors.tamarind,
-                  opacity: unfold.interpolate({ inputRange: [0, 1], outputRange: [0.35, 0] }),
-                }}
-              />
+                style={{ position: 'absolute', top: 0, left: 0, opacity: unfold.interpolate({ inputRange: [0, 1], outputRange: [0.35, 0] }) }}
+              >
+                <Svg width={LW} height={P2}>
+                  <Path d={tornPath(LW, P2, { left: true, right: true, bottom: true }, 5)} fill={colors.tamarind} />
+                </Svg>
+              </Animated.View>
             </Animated.View>
           </Animated.View>
 
@@ -293,16 +308,8 @@ const lineInput = [
     borderBottomWidth: 1.5,
     borderRadius: 0,
     borderColor: colors.maroon + '66',
+    position: 'relative', // keep it in front of the paper texture
+    zIndex: 1,
     ...(Platform.OS === 'web' ? { outlineStyle: 'none' } : {}),
   } as any,
 ];
-
-const paper = {
-  backgroundColor: '#F6EEDD',
-  borderRadius: 2,
-  shadowColor: '#2D120D',
-  shadowOpacity: 0.18,
-  shadowRadius: 6,
-  shadowOffset: { width: 0, height: 3 },
-  elevation: 3,
-} as const;

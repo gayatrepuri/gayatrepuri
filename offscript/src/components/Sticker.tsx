@@ -23,7 +23,8 @@ export type StickerName =
   | 'coffee'
   | 'books'
   | 'sparkle'
-  | 'camera';
+  | 'camera'
+  | 'goldseal';
 
 // shared colour gradients
 function Grads() {
@@ -62,6 +63,24 @@ function Grads() {
 const INK = '#5A4630'; // soft brown outline, like old print
 
 const ART: Record<StickerName, () => React.ReactElement> = {
+  goldseal: () => (
+    <G>
+      <Path
+        d="M32 5 C38 6 41 4 46 8 C51 12 55 11 57 17 C59 23 61 27 59 32 C57 38 60 42 56 47 C51 52 50 56 44 57 C38 59 36 61 30 59 C24 57 20 60 15 55 C10 50 7 48 7 41 C6 35 4 32 6 26 C8 20 7 15 13 11 C18 7 24 4 32 5 Z"
+        fill="url(#gold)"
+        stroke="#8A6424"
+        strokeWidth={0.8}
+      />
+      <Circle cx={32} cy={32} r={18} fill="none" stroke="#8A6424" strokeWidth={1.4} opacity={0.6} />
+      <Circle cx={32} cy={32} r={16.5} fill="none" stroke="#FBEFC4" strokeWidth={0.8} opacity={0.7} />
+      {/* embossed rose */}
+      <Circle cx={32} cy={29} r={6} fill="none" stroke="#8A6424" strokeWidth={1.1} />
+      <Path d="M28.5 29 C29 25.5 35 25.5 35.5 29 C35 32 29 32 28.5 29 M30.5 28.5 C31 27 33 27 33.5 28.5" stroke="#8A6424" strokeWidth={0.9} fill="none" />
+      <Path d="M32 35 V45 M32 39 C28 36 25 37 24 40 C27 41 30 40 32 39 M32 41 C36 38 39 39 40 42 C37 43 34 42 32 41" stroke="#8A6424" strokeWidth={1} fill="none" />
+      <Ellipse cx={22} cy={18} rx={6} ry={3} fill="#fff" opacity={0.35} />
+    </G>
+  ),
+
   headphones: () => (
     <G>
       <Path d="M12 36 C12 18 52 18 52 36" stroke="url(#gold)" strokeWidth={5} fill="none" strokeLinecap="round" />

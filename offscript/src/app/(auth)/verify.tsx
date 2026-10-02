@@ -1,9 +1,10 @@
 // Type in the code from your email, on a little card over the gingham.
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, useWindowDimensions, View } from 'react-native';
 import { Gingham } from '../../components/Gingham';
 import { Sticker } from '../../components/Sticker';
+import { TornPaper } from '../../components/TornPaper';
 import { Body, Button, H1, Input, Screen } from '../../components/ui';
 import { supabase } from '../../lib/supabase';
 import { space } from '../../lib/theme';
@@ -12,6 +13,7 @@ export default function Verify() {
   const { email } = useLocalSearchParams<{ email: string }>();
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
+  const cardW = Math.min(useWindowDimensions().width - 32, 360);
 
   const verify = async () => {
     setBusy(true);
@@ -25,18 +27,7 @@ export default function Verify() {
     <View style={{ flex: 1 }}>
       <Gingham />
       <Screen bg="transparent" style={{ flexGrow: 1, justifyContent: 'center' }}>
-        <View
-          style={{
-            backgroundColor: '#F6EEDD',
-            padding: space.xl,
-            borderRadius: 2,
-            shadowColor: '#2D120D',
-            shadowOpacity: 0.18,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 4 },
-            elevation: 3,
-          }}
-        >
+        <TornPaper width={cardW} height={400} seed={9} style={{ padding: space.xl, alignSelf: 'center', justifyContent: 'center' }}>
           <View style={{ alignItems: 'center', marginBottom: space.lg }}>
             <Sticker name="envelope" size={72} />
             <H1 style={{ marginTop: space.sm }}>Check your post</H1>
@@ -65,7 +56,7 @@ export default function Verify() {
               resend
             </Body>
           </View>
-        </View>
+        </TornPaper>
       </Screen>
     </View>
   );
