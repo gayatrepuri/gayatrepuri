@@ -48,7 +48,7 @@ You should see something like `v22.x.x`.
 In the terminal:
 
 ```
-cd ~/Desktop
+cd ~
 git clone https://github.com/gayatrepuri/gayatrepuri.git
 cd gayatrepuri
 git checkout claude/offscript-academic-meetup-m8wybj
@@ -56,10 +56,18 @@ cd offscript
 npm install
 ```
 
-- `cd` means "go into this folder".
-- `npm install` downloads all the building blocks the app needs. It takes 1–3 minutes, and warnings are normal.
+- `cd` means "go into this folder". `cd ~` goes to your home folder (e.g. `C:\Users\yourname`).
+- Run `git clone` **only once**. If you run it again from inside the project, you get a second copy nested inside the first.
+- `npm install` downloads all the building blocks the app needs. It takes 1–3 minutes, and yellow warnings are normal.
 
-Then open the folder in VS Code: **File → Open Folder… → Desktop/gayatrepuri/offscript**.
+> **Windows: "npm.ps1 cannot be loaded because running scripts is disabled"**
+> PowerShell blocks scripts by default. Run this once, then type `Y` if it asks:
+> ```
+> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+> ```
+> Then run `npm install` again. If that's not allowed on your computer, type `npm.cmd` instead of `npm` and `npx.cmd` instead of `npx` in every command in this guide.
+
+Then open the folder in VS Code: **File → Open Folder…** and pick the `offscript` folder inside `gayatrepuri` (e.g. `C:\Users\yourname\gayatrepuri\offscript`).
 
 ---
 
@@ -329,6 +337,7 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 
 | Problem | Fix |
 |---|---|
+| Windows: "running scripts is disabled on this system" | See the box in Step 2 (`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`). |
 | "Add your Supabase keys" message | The `.env` file is missing or misnamed (it must be exactly `.env`). Stop the app with Ctrl+C and run `npx expo start --clear`. |
 | No code email | Check junk. Check step 5 (template has `{{ .Token }}`). The built-in Supabase email is rate-limited, so set up Resend. |
 | "we aren't there yet" on the landing page | That email domain isn't in `universities`. Add it (Table Editor → universities). |
