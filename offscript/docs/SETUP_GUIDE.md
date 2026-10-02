@@ -192,7 +192,7 @@ offscript/
 **Easy changes you can make yourself:**
 - **Colours**: `src/lib/theme.ts`. The maroon / butter / baby-blue palette comes from your mood board (Rosewood `#6B0B0C`, Lemon Chiffon `#FFF8CA`, Botticelli `#CDE3E8`, Tamarind, Coffee Bean…).
 - **Fonts**: `src/lib/theme.ts`. They are:
-  - **Mrs Saint Delafield**: the "Offscript" wordmark, a pen calligraphy like *Villa D'Cipoletti*, shown inside a scalloped frame (`src/components/LogoFrame.tsx`).
+  - **Mrs Saint Delafield**: the "Offscript" wordmark, a pen calligraphy like *Villa D'Cipoletti*.
   - **Della Respira**: headings only, like *Brioche*.
   - **Courier Prime**: a typewriter font for everything else.
   - **Sacramento**: the occasional handwritten touch ("we aren't there yet ✿").
@@ -291,8 +291,8 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 - **A demo account for the reviewer.** They can't receive codes at a uni email, so:
   1. Supabase → Table Editor → `allowed_emails` → insert a row with `reviewer@yourdomain.com`.
   2. Supabase → **Authentication → Users → Add user → Create new user**, using that email, a password and **Auto Confirm User** ✅.
-  3. Log in once yourself: on the landing page, wait for the letter to open, then **press and hold the word Offscript on the letter**, and a password box appears. Then finish the questions.
-  4. Give that email and password to Apple and Google in the review notes, with this line: "On the first screen, once the letter opens, press and hold the word Offscript to show the password field." 
+  3. Log in once yourself: on the landing page, wait for the letter to come out, then **press and hold the word Offscript on the letter**, and a password box appears. Then finish the questions.
+  4. Give that email and password to Apple and Google in the review notes, with this line: "On the first screen, once the letter is out, press and hold the word Offscript to show the password field." 
 - **Age rating**: the app has user chat and meetups, so answer the questionnaire honestly. Expect **17+ / Mature**. Say users must be 18+ in your terms.
 - **Screenshots**: run the app, take screenshots on your phone (6.7" iPhone and an Android phone), and upload them.
 - **App Privacy "nutrition label"** (Apple): Contact info (email), User content (photos, messages, other), Identifiers (user ID), all **linked to the user**, **not used for tracking**.

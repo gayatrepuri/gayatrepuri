@@ -15,7 +15,7 @@ Offscript is a meetup app for academics. It launches in **London and Cambridge**
 
 Sign-up needs a **university email** (e.g. `@ucl.ac.uk`, `@cam.ac.uk`). New members add a portrait (shown in an ornate gold frame) and answer a few fun questions (favourite movie, favourite song, favourite place to cry at uni, dream holiday…). They **choose which answers to show**, and each answer appears next to its own vintage sticker: headphones for the song, a postcard for the dream destination, a ticket stub for the movie.
 
-The landing page is a maroon envelope on a baby-blue gingham tablecloth: the flap opens, a torn-edged letter with a gold wax seal slides out, *Offscript* is typed onto it in calligraphy inside a scalloped frame, and its second fold opens to ask for your email ([frames](docs/screens/landing-animation.png)).
+The landing page is a maroon envelope on a baby-blue gingham tablecloth: the flap opens, and a torn-edged letter pinned with a gold wax seal slides out with *Offscript* and the email box on it ([frames](docs/screens/landing-animation.png)).
 
 The look: maroon, butter yellow and baby blue, Brioche-style headings, typewriter text, and scrapbook stickers. Matches is a swipe deck, posts are pinned like scraps on a board, and joining a meetup stamps a wax seal.
 
