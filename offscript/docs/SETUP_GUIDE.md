@@ -169,6 +169,8 @@ Now try it: enter your university email, type in the code from your inbox, answe
 
 Things to play with: swipe people left/right on **Matches**, tap the stickers on a profile (they wiggle), and press **I'm in** on a post (a wax seal stamps onto it). Screenshots of the main screens are in `docs/screens/`.
 
+**After every `git pull`, run `npm install` once** to fetch any new building blocks the update needs.
+
 **While `npx expo start --go` is running, every time you save a file in VS Code the app on your phone updates instantly.** Try it: open `src/lib/constants.ts`, change a word, and save.
 
 To also see it in your web browser, press **w** in the terminal.
@@ -383,7 +385,9 @@ For Android, the first upload has to be done by hand in Play Console (Testing â†
 | "Add your Supabase keys" message | The `.env` file is missing or misnamed (it must be exactly `.env`). Stop the app with Ctrl+C and run `npx expo start --go --clear`. |
 | No code email | Check junk. Check step 5 (template has `{{ .Token }}`). The built-in Supabase email is rate-limited, so set up Resend. |
 | "we aren't there yet" on the landing page | That email domain isn't in `universities`. Add it (Table Editor â†’ universities). |
-| Phone can't connect to the QR code | Use `npx expo start --go --tunnel`. |
+| Phone can't connect to the QR code | Use `npm run tunnel` (same as `npx expo start --go --tunnel`). |
+| "Install @expo/ngrok and try again" | Run `npm install` in the project folder, then `npm run tunnel` again. |
+| Red error screen right after `git pull` | The update added new building blocks. Run `npm install`, then start again with `npx expo start --go --clear`. |
 | "No usable data found" when scanning | Expo started in development-build mode. Run `npx expo start --go` (or press **s**). |
 | Weird errors after installing something | `npx expo install --fix`, then `npx expo start --go --clear`. |
 | "Time to go Plus?" popup while testing | You hit a free limit. Set `is_plus = true` on your profile, or raise `plan_limits`. |

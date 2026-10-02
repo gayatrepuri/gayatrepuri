@@ -32,6 +32,7 @@
     "react-native-web": "^0.21.3"
   },
   "devDependencies": {
+    "@expo/ngrok": "^4.1.3",
     "@types/react": "~19.2.2",
     "typescript": "~6.0.3"
   },
@@ -41,7 +42,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "dev-build": "expo start --dev-client"
+    "dev-build": "expo start --dev-client",
+    "tunnel": "expo start --go --tunnel"
   },
   "private": true
 }
