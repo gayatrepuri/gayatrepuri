@@ -78,7 +78,7 @@ export type Match = {
   research_topic: string | null;
   interests: string[];
   shared_interests: string[];
-  shared_themes: string[]; // from AI matching (empty until it's set up)
+  shared_themes?: string[]; // from AI matching (missing until 0002_ai_matching.sql is run)
   score: number;
 };
 

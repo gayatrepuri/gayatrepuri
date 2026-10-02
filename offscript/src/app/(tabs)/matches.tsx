@@ -114,13 +114,13 @@ export default function Matches() {
                 “{m.research_topic}”
               </Body>
             ) : null}
-            {m.shared_themes.length || m.shared_interests.length ? (
+            {(m.shared_themes ?? []).length || (m.shared_interests ?? []).length ? (
               <View style={{ marginTop: space.md, alignItems: 'center' }}>
                 <Body muted style={{ fontSize: 11, marginBottom: 6 }}>
                   you both
                 </Body>
                 <ChipRow>
-                  {[...new Set([...m.shared_themes, ...m.shared_interests])].slice(0, 5).map((t) => (
+                  {[...new Set([...(m.shared_themes ?? []), ...(m.shared_interests ?? [])])].slice(0, 5).map((t) => (
                     <Chip key={t} label={t} small sticker="hibiscus" />
                   ))}
                 </ChipRow>
