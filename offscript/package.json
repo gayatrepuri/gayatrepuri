@@ -43,7 +43,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "dev-build": "expo start --dev-client",
-    "tunnel": "expo start --go --tunnel"
+    "tunnel": "expo start --go --tunnel",
+    "build:web": "expo export --platform web"
   },
   "private": true
 }

@@ -177,6 +177,28 @@ To also see it in your web browser, press **w** in the terminal.
 
 ---
 
+## Step 6½: Share a web version with testers anywhere (free, 10 minutes)
+
+Expo Go only works while your laptop is running. For friends somewhere else, put a **web version** online. They open a link on their phone (any phone, in Safari or Chrome) and it works like the app.
+
+1. In the VS Code terminal (stop the app first with Ctrl+C):
+   ```
+   npm run build:web
+   ```
+   This makes a folder called **`dist`** inside your project (`C:\Users\you\gayatrepuri\offscript\dist`).
+2. Go to **https://app.netlify.com/drop** and sign up (free).
+3. Open File Explorer, find the **`dist`** folder, and **drag the whole folder** onto the Netlify page.
+4. After a few seconds you get a link like `https://wonderful-name-123.netlify.app`. In **Site configuration → Change site name** you can make it `offscript-beta.netlify.app`.
+5. Add your friends' emails to `allowed_emails` in Supabase (unless they use a London or Cambridge uni email), then send them the link.
+
+Tip for testers: in Safari, tap **Share → Add to Home Screen**. It then opens full-screen with its own icon, just like an app.
+
+**To update the web version** after changes: run `npm run build:web` again, then on Netlify go to your site → **Deploys** and drag the new `dist` folder onto the page.
+
+The web version doesn't do payments (those only work in the App Store / Google Play apps), and there are no vibrations, but everything else works.
+
+---
+
 ## Step 7: How the code is organised (so you know what to change)
 
 ```
@@ -386,6 +408,7 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 | No code email | Check junk. Check step 5 (template has `{{ .Token }}`). The built-in Supabase email is rate-limited, so set up Resend. |
 | "we aren't there yet" on the landing page | That email domain isn't in `universities`. Add it (Table Editor → universities). |
 | Phone can't connect to the QR code | Use `npm run tunnel` (same as `npx expo start --go --tunnel`). |
+| `CommandError: ... reading 'body'` with `--tunnel` | ngrok (the tunnel service) is having problems. Use the same Wi-Fi or your phone's hotspot without `--tunnel`, or share the web version (Step 6½). |
 | "Install @expo/ngrok and try again" | Run `npm install` in the project folder, then `npm run tunnel` again. |
 | Red error screen right after `git pull` | The update added new building blocks. Run `npm install`, then start again with `npx expo start --go --clear`. |
 | "No usable data found" when scanning | Expo started in development-build mode. Run `npx expo start --go` (or press **s**). |

@@ -10,6 +10,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '../lib/auth';
+import '../lib/webAlert';
 import { colors, fonts } from '../lib/theme';
 
 SplashScreen.preventAutoHideAsync();
