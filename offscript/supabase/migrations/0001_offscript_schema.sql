@@ -13,6 +13,9 @@ create table public.universities (
   name   text not null,             -- e.g. 'UCL'
   city   text not null check (city in ('London', 'Cambridge'))
 );
+-- Locked: nobody can read or change this list from the app. The sign-up check
+-- below runs with admin rights, and you edit the list in the Supabase dashboard.
+alter table public.universities enable row level security;
 
 insert into public.universities (domain, name, city) values
   ('cam.ac.uk',         'University of Cambridge',            'Cambridge'),
