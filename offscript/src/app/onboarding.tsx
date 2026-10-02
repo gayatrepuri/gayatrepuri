@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Alert, View } from 'react-native';
 import { ProfileSection, draftFromProfile, type ProfileDraft, type Section } from '../components/ProfileForm';
 import { Button, Screen } from '../components/ui';
+import { refreshThemes } from '../lib/ai';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { colors, space } from '../lib/theme';
@@ -27,6 +28,7 @@ export default function Onboarding() {
       .eq('id', profile!.id);
     setSaving(false);
     if (error) return Alert.alert('Could not save', error.message);
+    refreshThemes(); // AI matching works in the background
     await refreshProfile(); // this moves you into the app
   };
 

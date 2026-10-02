@@ -1,10 +1,11 @@
 // Matches: swipe through people with a similar research focus.
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { GoldFrame } from '../../components/GoldFrame';
 import { SwipeDeck } from '../../components/SwipeDeck';
 import { Avatar, Body, Button, Card, Chip, ChipRow, Empty, H1, H2, Screen, Tap } from '../../components/ui';
+import { refreshThemes } from '../../lib/ai';
 import { useMe } from '../../lib/auth';
 import { handleError } from '../../lib/errors';
 import { supabase } from '../../lib/supabase';
@@ -18,6 +19,7 @@ export default function Matches() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [requests, setRequests] = useState<Request[]>([]);
   const [deckKey, setDeckKey] = useState(0);
+  const analysed = useRef(false);
 
   const load = useCallback(async () => {
     const [{ data: m }, { data: r }] = await Promise.all([
@@ -40,6 +42,12 @@ export default function Matches() {
   useFocusEffect(
     useCallback(() => {
       load();
+      // once per visit to the app, make sure your AI themes are up to date
+      // (the server skips the work if nothing changed), then refresh the deck
+      if (!analysed.current) {
+        analysed.current = true;
+        refreshThemes().then(load);
+      }
     }, [load]),
   );
 
@@ -106,10 +114,13 @@ export default function Matches() {
                 “{m.research_topic}”
               </Body>
             ) : null}
-            {m.shared_interests.length ? (
-              <View style={{ marginTop: space.md }}>
+            {m.shared_themes.length || m.shared_interests.length ? (
+              <View style={{ marginTop: space.md, alignItems: 'center' }}>
+                <Body muted style={{ fontSize: 11, marginBottom: 6 }}>
+                  you both
+                </Body>
                 <ChipRow>
-                  {m.shared_interests.slice(0, 4).map((t) => (
+                  {[...new Set([...m.shared_themes, ...m.shared_interests])].slice(0, 5).map((t) => (
                     <Chip key={t} label={t} small sticker="hibiscus" />
                   ))}
                 </ChipRow>

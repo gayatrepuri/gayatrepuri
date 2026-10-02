@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Alert, View } from 'react-native';
 import { ProfileSection, draftFromProfile, type ProfileDraft } from '../components/ProfileForm';
 import { Button, Screen } from '../components/ui';
+import { refreshThemes } from '../lib/ai';
 import { useMe } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { space } from '../lib/theme';
@@ -18,6 +19,7 @@ export default function EditProfile() {
     const { error } = await supabase.from('profiles').update(draft).eq('id', profile.id);
     setSaving(false);
     if (error) return Alert.alert('Could not save', error.message);
+    refreshThemes(); // AI matching works in the background
     await refreshProfile();
     router.back();
   };

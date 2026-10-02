@@ -225,6 +225,37 @@ offscript/
 
 ---
 
+## Step 7½: AI matching (optional, about 15 minutes)
+
+Without this, matches are scored on research field, interest tags, city and university. With it, **Claude** (Anthropic's AI) reads each person's *visible* answers (research, favourite song and movie, dream destination, place to cry, coffee order, bio) and understands their themes. For example, it knows "Motion Sickness" is melancholy indie and "Hokkaido in winter" means snowy places in East Asia. Matches then rank higher when two people's research and taste are genuinely close, and the match card shows what you have in common ("you both: melancholy indie · snowy places").
+
+Hidden answers are never sent to the AI.
+
+**1. Get a Claude API key**
+1. Go to https://console.anthropic.com and sign up.
+2. **Billing**: add some credit. $5 lasts a long time: each profile analysis costs about 1p, and it only re-runs when someone changes their answers.
+3. **API Keys → Create Key**: name it `offscript` and copy the key (starts with `sk-ant-`). Keep it secret, and **never** put it in `.env` or the app itself.
+
+**2. Add the AI tables to your database**
+Supabase → **SQL Editor → + New query**. Paste the whole of `supabase/migrations/0002_ai_matching.sql` and click **Run**.
+
+**3. Put the AI function online**
+In the VS Code terminal (stop the app first with Ctrl+C):
+```
+npx supabase login
+npx supabase link --project-ref YOUR_PROJECT_ID
+npx supabase functions deploy analyse-profile
+npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+`YOUR_PROJECT_ID` is the code in your Supabase URL (`https://THIS-PART.supabase.co`). If `link` asks for the database password, it's the one you saved when creating the project.
+
+**4. Check it works**
+Start the app again, open **Me → Edit**, and tap **Save**. After 10–20 seconds, Supabase → **Table Editor → profile_themes** should show a row with your themes. Opening the **Matches** tab also refreshes your themes.
+
+If no row appears: Supabase → **Edge Functions → analyse-profile → Logs** shows what went wrong. "ANTHROPIC_API_KEY is missing or wrong" means step 3's last command needs re-running.
+
+---
+
 ## Step 8: Payments (Offscript Plus, £4.99/month)
 
 Apple and Google **require** app subscriptions to go through their own payment systems. RevenueCat handles both for you.
