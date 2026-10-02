@@ -34,6 +34,6 @@ The look: maroon, butter yellow and baby blue, Brioche-style headings, typewrite
 
 ```bash
 npm install          # first time only
-npx expo start       # run the app (scan the QR code with Expo Go)
+npx expo start --go  # run the app in Expo Go (or: npm start)
 npm run typecheck    # check the code for mistakes
 ```

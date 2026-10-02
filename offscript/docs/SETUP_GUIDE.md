@@ -149,23 +149,27 @@ Offscript logs people in with a **6-digit code** sent to their university email,
 
 ## Step 6: Run the app on your phone 🎉
 
-In the terminal (inside the `offscript` folder):
+In VS Code, open the terminal (**Ctrl + `**, or **… → Terminal → New Terminal**) and run:
 
 ```
-npx expo start
+npx expo start --go
 ```
+
+The `--go` part matters: it tells Expo to open the app in **Expo Go**. Without it, Expo starts a "development build" (only needed later for testing real payments) and the QR code won't open in Expo Go. Check that the terminal says **"Using Expo Go"**. If it says "Using development build", press **s** to switch.
+
+The first time, Expo Go may say you're "not signed in to Expo CLI". If so, press Ctrl+C, run `npx expo login` with the same account you use in Expo Go, then run `npx expo start --go` again. After that, your project appears in Expo Go under **Development servers**, so you can tap it instead of scanning.
 
 A QR code appears.
 - **iPhone**: open the Camera app and point it at the QR code, then tap the banner.
 - **Android**: open **Expo Go** and tap **Scan QR code**.
 
-Your phone and laptop must be on the same Wi-Fi. If that doesn't work (e.g. on eduroam), stop it (Ctrl+C) and run `npx expo start --tunnel` instead.
+Your phone and laptop must be on the same Wi-Fi. If that doesn't work (e.g. on eduroam), stop it (Ctrl+C) and run `npx expo start --go --tunnel` instead.
 
 Now try it: enter your university email, type in the code from your inbox, answer the questions, add a portrait, and pin a coffee run!
 
 Things to play with: swipe people left/right on **Matches**, tap the stickers on a profile (they wiggle), and press **I'm in** on a post (a wax seal stamps onto it). Screenshots of the main screens are in `docs/screens/`.
 
-**While `npx expo start` is running, every time you save a file in VS Code the app on your phone updates instantly.** Try it: open `src/lib/constants.ts`, change a word, and save.
+**While `npx expo start --go` is running, every time you save a file in VS Code the app on your phone updates instantly.** Try it: open `src/lib/constants.ts`, change a word, and save.
 
 To also see it in your web browser, press **w** in the terminal.
 
@@ -267,7 +271,7 @@ Then in RevenueCat → **Integrations → Webhooks → Add**:
 Now, when someone subscribes, the webhook switches on `is_plus` in their profile and the limits disappear.
 
 > **Testing payments:** Expo Go only *pretends* to buy (RevenueCat's "preview mode"). To test real (sandbox) purchases you need a **development build**:
-> `npx eas-cli@latest build --profile development --platform ios` (or `android`). Install it on your phone, then run `npx expo start` as usual.
+> `npx eas-cli@latest build --profile development --platform ios` (or `android`). Install it on your phone, then run `npm run dev-build` (instead of `npx expo start --go`).
 >
 > **Give yourself or a friend Plus by hand:** Supabase → Table Editor → profiles → set `is_plus` to `true`.
 
@@ -345,10 +349,11 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 | Problem | Fix |
 |---|---|
 | Windows: "running scripts is disabled on this system" | See the box in Step 2 (`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`). |
-| "Add your Supabase keys" message | The `.env` file is missing or misnamed (it must be exactly `.env`). Stop the app with Ctrl+C and run `npx expo start --clear`. |
+| "Add your Supabase keys" message | The `.env` file is missing or misnamed (it must be exactly `.env`). Stop the app with Ctrl+C and run `npx expo start --go --clear`. |
 | No code email | Check junk. Check step 5 (template has `{{ .Token }}`). The built-in Supabase email is rate-limited, so set up Resend. |
 | "we aren't there yet" on the landing page | That email domain isn't in `universities`. Add it (Table Editor → universities). |
-| Phone can't connect to the QR code | Use `npx expo start --tunnel`. |
-| Weird errors after installing something | `npx expo install --fix`, then `npx expo start --clear`. |
+| Phone can't connect to the QR code | Use `npx expo start --go --tunnel`. |
+| "No usable data found" when scanning | Expo started in development-build mode. Run `npx expo start --go` (or press **s**). |
+| Weird errors after installing something | `npx expo install --fix`, then `npx expo start --go --clear`. |
 | "Time to go Plus?" popup while testing | You hit a free limit. Set `is_plus = true` on your profile, or raise `plan_limits`. |
 | Want help changing something | Open the project in VS Code with an AI coding assistant (like Claude Code) and describe the change in plain English. |
