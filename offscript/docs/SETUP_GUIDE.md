@@ -120,23 +120,30 @@ It also locks the data down, so people can only read and change what they're all
 
 ## Step 5: Set up the login emails
 
-Offscript logs people in with a **6-digit code** sent to their university email, so there are no passwords to forget.
+Offscript logs people in with a **6-digit code** sent to their university email, so there are no passwords to forget. Supabase only lets you change its emails once you connect your own email sender ("SMTP"), so that comes first.
 
 1. Supabase → **Authentication → Sign In / Providers → Email**. Make sure **Email** is enabled. Save.
-2. Supabase → **Authentication → Emails** (called **Email Templates** on some accounts) → **Magic Link** template. Replace the body with:
+
+2. **Connect an email sender.**
+   - **For testing (free, 5 minutes): your Gmail.**
+     1. Turn on **2-Step Verification** at https://myaccount.google.com/security
+     2. Create an app password at https://myaccount.google.com/apppasswords (name it "Supabase"), and copy the 16-letter password.
+     3. Supabase → **Authentication → Emails → SMTP Settings** → enable custom SMTP:
+        sender email = your Gmail, sender name `Offscript`, host `smtp.gmail.com`, port `465`, username = your Gmail, password = the app password (no spaces). Save.
+   - **Before real launch: Resend with your own domain.** University email filters are strict, and a proper domain stops your codes landing in junk.
+     1. Buy a domain (e.g. `offscript.app`, about £10/year from Namecheap or Cloudflare).
+     2. Make a free account at https://resend.com, add and verify the domain, and create an API key.
+     3. Change the SMTP settings to: host `smtp.resend.com`, port `465`, username `resend`, password = your Resend API key, sender `hello@yourdomain`.
+
+3. **Edit the emails to show the code.** Supabase → **Authentication → Emails → Templates** → **Magic Link**. Set the subject to `Your Offscript code` and replace the body with:
 
    ```html
    <h2>Your Offscript code</h2>
-   <p>Here's your login code: <strong style="font-size:24px">{{ .Token }}</strong></p>
-   <p>It expires in 1 hour. If you didn't ask for this, ignore this email.</p>
+   <p>Your login code: <strong style="font-size:24px">{{ .Token }}</strong></p>
+   <p>It expires in 1 hour.</p>
    ```
-   Do the same for the **Confirm signup** template. Save both.
-   The `{{ .Token }}` part is what makes Supabase send a code instead of a link.
-3. **Before real launch: set up proper email sending.** Supabase's built-in email only sends a handful of emails per hour, which is fine for testing but not for launch.
-   - Make a free account at https://resend.com, add and verify a domain (e.g. `offscript.app`; domains cost about £10/year from Namecheap or Cloudflare), and create an API key.
-   - Supabase → **Authentication → Emails → SMTP Settings** → enable custom SMTP:
-     host `smtp.resend.com`, port `465`, user `resend`, password = your Resend API key, sender `hello@yourdomain`.
-   - University email filters are strict, and a proper domain stops your codes landing in junk.
+   Do the same for the **Confirm sign up** template. Save both.
+   The `{{ .Token }}` part is what makes the email contain a code instead of a link.
 
 ---
 
