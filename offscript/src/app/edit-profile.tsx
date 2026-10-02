@@ -15,6 +15,9 @@ export default function EditProfile() {
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
+    if (draft.age != null && (draft.age < 16 || draft.age > 100)) {
+      return Alert.alert('Check your age', 'Age needs to be between 16 and 100, or leave it blank.');
+    }
     setSaving(true);
     const { error } = await supabase.from('profiles').update(draft).eq('id', profile.id);
     setSaving(false);

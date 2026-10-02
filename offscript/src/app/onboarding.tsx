@@ -33,6 +33,9 @@ function OnboardingSteps() {
 
   const next = async () => {
     if (step === 0 && draft.display_name.trim().length < 2) return Alert.alert('Your name?');
+    if (step === 0 && draft.age != null && (draft.age < 16 || draft.age > 100)) {
+      return Alert.alert('Check your age', 'Age needs to be between 16 and 100, or leave it blank.');
+    }
     if (STEPS[step] === 'research' && !draft.research_field) return Alert.alert('Pick a field');
     if (step < STEPS.length - 1) return setStep(step + 1);
 
