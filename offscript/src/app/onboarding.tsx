@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Alert, View } from 'react-native';
 import { ProfileSection, draftFromProfile, type ProfileDraft, type Section } from '../components/ProfileForm';
-import { Button, Screen } from '../components/ui';
+import { Body, Button, Screen } from '../components/ui';
 import { refreshThemes } from '../lib/ai';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
@@ -11,6 +11,21 @@ import { colors, space } from '../lib/theme';
 const STEPS: Section[] = ['basics', 'photo', 'research', 'fun', 'privacy'];
 
 export default function Onboarding() {
+  const { profile, refreshProfile, signOut } = useAuth();
+  if (!profile) {
+    // logged in, but no profile came back (e.g. a network hiccup)
+    return (
+      <Screen style={{ flexGrow: 1, justifyContent: 'center' }}>
+        <Body style={{ textAlign: 'center', marginBottom: space.lg }}>Couldn’t load your profile.</Body>
+        <Button title="Try again" onPress={refreshProfile} />
+        <Button title="Sign out" variant="ghost" onPress={signOut} style={{ marginTop: space.md, borderWidth: 0 }} />
+      </Screen>
+    );
+  }
+  return <OnboardingSteps />;
+}
+
+function OnboardingSteps() {
   const { profile, refreshProfile, signOut } = useAuth();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<ProfileDraft>(() => draftFromProfile(profile!));

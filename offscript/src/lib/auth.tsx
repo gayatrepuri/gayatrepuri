@@ -18,22 +18,26 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [started, setStarted] = useState(false);
+  // whose profile we've finished fetching (so we never show screens with a half-loaded profile)
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
 
   const loadProfile = useCallback(async (userId: string | undefined) => {
     if (!userId) {
       setProfile(null);
+      setLoadedFor(null);
       return;
     }
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+    const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     setProfile((data as Profile) ?? null);
+    setLoadedFor(userId);
   }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
       await loadProfile(data.session?.user.id);
-      setLoading(false);
+      setStarted(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
@@ -42,6 +46,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     return () => sub.subscription.unsubscribe();
   }, [loadProfile]);
+
+  // still loading until we know who's logged in AND have their profile
+  const loading = !started || (session != null && loadedFor !== session.user.id);
 
   const value: AuthState = {
     session,
