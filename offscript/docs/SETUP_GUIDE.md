@@ -291,8 +291,8 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 - **A demo account for the reviewer.** They can't receive codes at a uni email, so:
   1. Supabase → Table Editor → `allowed_emails` → insert a row with `reviewer@yourdomain.com`.
   2. Supabase → **Authentication → Users → Add user → Create new user**, using that email, a password and **Auto Confirm User** ✅.
-  3. Log in once yourself: on the landing page, **press and hold the Offscript logo**, and a password box appears. Then finish the questions.
-  4. Give that email and password to Apple and Google in the review notes, with this line: "Press and hold the Offscript logo on the first screen to show the password field." 
+  3. Log in once yourself: on the landing page, wait for the letter to open, then **press and hold the word Offscript on the letter**, and a password box appears. Then finish the questions.
+  4. Give that email and password to Apple and Google in the review notes, with this line: "On the first screen, once the letter opens, press and hold the word Offscript to show the password field." 
 - **Age rating**: the app has user chat and meetups, so answer the questionnaire honestly. Expect **17+ / Mature**. Say users must be 18+ in your terms.
 - **Screenshots**: run the app, take screenshots on your phone (6.7" iPhone and an Android phone), and upload them.
 - **App Privacy "nutrition label"** (Apple): Contact info (email), User content (photos, messages, other), Identifiers (user ID), all **linked to the user**, **not used for tracking**.
