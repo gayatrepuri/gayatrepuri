@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Linking, Platform, View } from 'react-native';
 import { GoldFrame } from '../../components/GoldFrame';
 import { ProfileDetails } from '../../components/ProfileDetails';
-import { Body, Button, Card, H1, Screen, Tap } from '../../components/ui';
+import { Body, Button, Card, GinghamBand, H1, Screen, Tap } from '../../components/ui';
 import { useAuth, useMe } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
 import { colors, space } from '../../lib/theme';
@@ -39,7 +39,8 @@ export default function Me() {
 
   return (
     <Screen>
-      <View style={{ alignItems: 'center', marginBottom: space.lg }}>
+      <GinghamBand height={130} />
+      <View style={{ alignItems: 'center', marginBottom: space.lg, marginTop: -110 }}>
         <Tap onPress={() => router.push('/edit-profile')}>
           <GoldFrame uri={profile.avatar_url} name={profile.display_name} width={220} />
         </Tap>
@@ -50,7 +51,7 @@ export default function Me() {
         <Body muted>{profile.university}</Body>
       </View>
 
-      <Button title="Edit" variant="butter" sticker="clip" onPress={() => router.push('/edit-profile')} />
+      <Button title="Edit" variant="blue" sticker="clip" onPress={() => router.push('/edit-profile')} />
 
       {usage && !usage.is_plus ? (
         <Card tone="maroon" onPress={() => router.push('/plus')} style={{ marginTop: space.xl }}>

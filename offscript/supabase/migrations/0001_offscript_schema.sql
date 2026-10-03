@@ -255,6 +255,7 @@ where p.onboarded
   and auth.uid() is not null
   and not public.is_blocked(auth.uid(), p.id);
 
+alter view public.public_profiles set (security_invoker = false); -- must read others' rows (see 0003)
 revoke all on public.public_profiles from anon;
 grant select on public.public_profiles to authenticated;
 
@@ -346,6 +347,7 @@ select
 from public.posts p
 join public.public_profiles a on a.id = p.author_id;  -- hides blocked / un-onboarded authors
 
+alter view public.feed_posts set (security_invoker = false);
 revoke all on public.feed_posts from anon;
 grant select on public.feed_posts to authenticated;
 

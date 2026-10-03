@@ -75,7 +75,7 @@ export function SwipeDeck<T extends { id: string }>({
         >
           {renderCard(current)}
           <Animated.View style={{ position: 'absolute', top: 18, left: 18, opacity: yesOpacity, transform: [{ rotate: '-14deg' }] }}>
-            <Sticker name="waxheart" size={84} />
+            <Sticker name="bulb" size={88} />
           </Animated.View>
           <Animated.View style={{ position: 'absolute', top: 18, right: 18, opacity: noOpacity, transform: [{ rotate: '14deg' }] }}>
             <Sticker name="button" size={70} />
@@ -88,7 +88,7 @@ export function SwipeDeck<T extends { id: string }>({
           <Sticker name="button" size={58} />
         </Tap>
         <Tap onPress={() => fling(1)} accessibilityLabel="Say hi">
-          <Sticker name="waxheart" size={66} />
+          <Sticker name="bulb" size={70} />
         </Tap>
       </View>
     </View>

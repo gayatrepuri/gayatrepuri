@@ -15,6 +15,9 @@ export const colors = {
   // baby blue
   babyBlue: '#CDE3E8',
   sky: '#93B1C9',
+  blueStripe: '#A9CAD6', // the gingham stripe on the landing page
+  blueWash: '#EAF3F5', // very light blue for chips and fields
+  blueInk: '#4E7F91', // blue for small labels
 
   // scrapbook neutrals
   paper: '#F4EDDC', // warm off-white background

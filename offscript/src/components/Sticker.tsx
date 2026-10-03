@@ -30,7 +30,9 @@ export type StickerName =
   | 'champagne'
   | 'key'
   | 'seashell'
-  | 'star';
+  | 'star'
+  | 'bulb'
+  | 'poll';
 
 const IMAGES: Record<StickerName, number> = {
   headphones: require('../../assets/stickers/headphones.png'),
@@ -59,6 +61,8 @@ const IMAGES: Record<StickerName, number> = {
   key: require('../../assets/stickers/key.png'),
   seashell: require('../../assets/stickers/seashell.png'),
   star: require('../../assets/stickers/star.png'),
+  bulb: require('../../assets/stickers/bulb.png'),
+  poll: require('../../assets/stickers/poll.png'),
 };
 
 export function Sticker({ name, size = 40 }: { name: StickerName; size?: number }) {

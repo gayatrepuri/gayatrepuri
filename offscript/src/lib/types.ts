@@ -11,6 +11,7 @@ export type PostKind =
   | 'ticket'
   | 'study_participants'
   | 'conference'
+  | 'poll'
   | 'other';
 
 export type Profile = {
@@ -65,6 +66,7 @@ export type FeedPost = {
   author_field: string | null;
   attendee_count: number;
   i_joined: boolean;
+  vote_count?: number; // polls (after 0003_polls_and_view_fix.sql)
 };
 
 export type Match = {

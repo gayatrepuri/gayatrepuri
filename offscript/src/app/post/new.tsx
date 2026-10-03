@@ -1,7 +1,7 @@
 // Make a new post: pick a sticker, write a line, choose when.
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Alert, ScrollView, Text, View } from 'react-native';
 import { Sticker } from '../../components/Sticker';
 import { Button, Chip, ChipRow, H1, Input, Label, Screen, Tap } from '../../components/ui';
 import { useMe } from '../../lib/auth';
@@ -25,6 +25,9 @@ export default function NewPost() {
   const [capacity, setCapacity] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [options, setOptions] = useState<string[]>(['', '']); // poll answers
+  const isPoll = kind === 'poll';
+  const filledOptions = options.map((o) => o.trim()).filter(Boolean);
 
   const days = useMemo(
     () =>
@@ -46,6 +49,7 @@ export default function NewPost() {
   };
 
   const submit = async () => {
+    if (isPoll && filledOptions.length < 2) return Alert.alert('Add at least two answers');
     setBusy(true);
     const { data, error } = await supabase
       .from('posts')
@@ -56,14 +60,24 @@ export default function NewPost() {
         body: body.trim() || null,
         location: location.trim() || null,
         city: profile.city,
-        starts_at: startsAt(),
-        capacity: capacity ? Number(capacity) : null,
+        starts_at: isPoll ? null : startsAt(),
+        capacity: isPoll || !capacity ? null : Number(capacity),
         tags,
       })
       .select('id')
       .single();
+    if (handleError(error)) return setBusy(false);
+    if (isPoll) {
+      const { error: optError } = await supabase
+        .from('poll_options')
+        .insert(filledOptions.map((label, position) => ({ post_id: data!.id, label, position })));
+      if (optError) {
+        await supabase.from('posts').delete().eq('id', data!.id); // don't leave a poll with no answers
+        setBusy(false);
+        return handleError(optError);
+      }
+    }
     setBusy(false);
-    if (handleError(error)) return;
     router.replace(`/post/${data!.id}`);
   };
 
@@ -98,36 +112,56 @@ export default function NewPost() {
       </View>
 
       <Input value={title} onChangeText={setTitle} placeholder={example} maxLength={120} style={{ fontFamily: fonts.heading, fontSize: 16 }} />
-      <Input value={location} onChangeText={setLocation} placeholder="where?" />
-
-      <Label>When</Label>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View style={{ flexDirection: 'row', gap: space.sm }}>
-          <Chip label="Anytime" selected={dayOffset === null} onPress={() => { setDayOffset(null); setHour(null); }} />
-          {days.map((d) => (
-            <Chip key={d.i} label={d.label} selected={dayOffset === d.i} onPress={() => setDayOffset(d.i)} />
+      {isPoll ? (
+        <View style={{ marginBottom: space.lg }}>
+          <Label>Answers</Label>
+          {options.map((o, i) => (
+            <Input
+              key={i}
+              value={o}
+              onChangeText={(t) => setOptions(options.map((x, j) => (j === i ? t : x)))}
+              placeholder={`answer ${i + 1}`}
+              maxLength={80}
+            />
           ))}
+          {options.length < 6 ? (
+            <Button title="+ another answer" variant="blue" onPress={() => setOptions([...options, ''])} />
+          ) : null}
         </View>
-      </ScrollView>
-      {dayOffset !== null ? (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: space.sm }}>
+      ) : (
+        <>
+      <Input value={location} onChangeText={setLocation} placeholder="where?" />
+  
+        <Label>When</Label>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={{ flexDirection: 'row', gap: space.sm }}>
-            {HOURS.map((h) => (
-              <Chip key={h} label={`${String(h).padStart(2, '0')}:00`} selected={hour === h} onPress={() => setHour(h)} />
+            <Chip label="Anytime" selected={dayOffset === null} onPress={() => { setDayOffset(null); setHour(null); }} />
+            {days.map((d) => (
+              <Chip key={d.i} label={d.label} selected={dayOffset === d.i} onPress={() => setDayOffset(d.i)} />
             ))}
           </View>
         </ScrollView>
-      ) : null}
-      <View style={{ height: space.lg }} />
-
-      <Input value={body} onChangeText={setBody} placeholder="details (optional)" multiline maxLength={2000} />
-      <Input
-        value={capacity}
-        onChangeText={(t) => setCapacity(t.replace(/\D/g, ''))}
-        keyboardType="number-pad"
-        placeholder="max people (optional)"
-        maxLength={3}
-      />
+        {dayOffset !== null ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: space.sm }}>
+            <View style={{ flexDirection: 'row', gap: space.sm }}>
+              {HOURS.map((h) => (
+                <Chip key={h} label={`${String(h).padStart(2, '0')}:00`} selected={hour === h} onPress={() => setHour(h)} />
+              ))}
+            </View>
+          </ScrollView>
+        ) : null}
+        <View style={{ height: space.lg }} />
+  
+        <Input value={body} onChangeText={setBody} placeholder="details (optional)" multiline maxLength={2000} />
+        <Input
+          value={capacity}
+          onChangeText={(t) => setCapacity(t.replace(/\D/g, ''))}
+          keyboardType="number-pad"
+          placeholder="max people (optional)"
+          maxLength={3}
+        />
+        </>
+      )}
 
       <Label>Tags</Label>
       <InterestPicker
@@ -141,7 +175,7 @@ export default function NewPost() {
         sticker="waxseal"
         onPress={submit}
         loading={busy}
-        disabled={title.trim().length < 3 || (dayOffset !== null && hour === null)}
+        disabled={title.trim().length < 3 || (!isPoll && dayOffset !== null && hour === null)}
         style={{ marginTop: space.xl }}
       />
       <Button title="Cancel" variant="ghost" onPress={() => router.back()} style={{ marginTop: space.md, borderWidth: 0 }} />

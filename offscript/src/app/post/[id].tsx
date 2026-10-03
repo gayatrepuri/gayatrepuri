@@ -4,6 +4,7 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { Alert, Animated, View } from 'react-native';
 import { tiltFor } from '../../components/PostCard';
+import { PollBlock } from '../../components/PollBlock';
 import { ReportModal } from '../../components/ReportModal';
 import { Sticker } from '../../components/Sticker';
 import { Avatar, Body, Button, Card, Chip, ChipRow, H1, Label, Loading, Screen, Tap, haptic } from '../../components/ui';
@@ -88,12 +89,14 @@ export default function PostDetail() {
   return (
     <Screen>
       <View>
-        <Card tone="cream" tilt={tiltFor(post.id)} style={{ paddingTop: space.xl, marginTop: space.lg }}>
+        <Card tone={post.kind === 'poll' ? 'blue' : 'cream'} tilt={post.kind === 'poll' ? 0 : tiltFor(post.id)} style={{ paddingTop: space.xl, marginTop: space.lg }}>
           <H1 style={{ fontSize: 22, lineHeight: 30, paddingRight: 40 }}>{post.title}</H1>
-          <Body muted style={{ marginTop: space.sm }}>
-            {formatWhen(post.starts_at)}
-            {post.location ? `\n${post.location}` : ''}
-          </Body>
+          {post.kind !== 'poll' ? (
+            <Body muted style={{ marginTop: space.sm }}>
+              {formatWhen(post.starts_at)}
+              {post.location ? `\n${post.location}` : ''}
+            </Body>
+          ) : null}
           {post.body ? <Body style={{ marginTop: space.md }}>{post.body}</Body> : null}
           {post.tags.length ? (
             <View style={{ marginTop: space.md }}>
@@ -104,10 +107,16 @@ export default function PostDetail() {
               </ChipRow>
             </View>
           ) : null}
-          <Body bold style={{ marginTop: space.md, color: colors.maroon }}>
-            {post.attendee_count}
-            {post.capacity ? `/${post.capacity}` : ''} going
-          </Body>
+          {post.kind === 'poll' ? (
+            <View style={{ marginTop: space.lg }}>
+              <PollBlock postId={id} myId={userId} />
+            </View>
+          ) : (
+            <Body bold style={{ marginTop: space.md, color: colors.maroon }}>
+              {post.attendee_count}
+              {post.capacity ? `/${post.capacity}` : ''} going
+            </Body>
+          )}
         </Card>
         <View style={{ position: 'absolute', top: 0, right: 8 }}>
           <Sticker name={info.sticker} size={60} />
@@ -143,6 +152,8 @@ export default function PostDetail() {
       <View style={{ marginTop: space.xl, gap: space.md }}>
         {post.is_cancelled ? (
           <Body style={{ color: colors.danger, textAlign: 'center' }}>Cancelled</Body>
+        ) : post.kind === 'poll' ? (
+          isHost ? <Button title="Close poll" variant="danger" onPress={cancel} /> : null
         ) : isHost ? (
           <>
             <Button title="Group chat" sticker="envelope" onPress={() => router.push(`/post/chat/${id}`)} />

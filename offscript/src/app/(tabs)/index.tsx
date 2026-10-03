@@ -5,7 +5,7 @@ import { FlatList, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PostCard } from '../../components/PostCard';
 import { Sticker } from '../../components/Sticker';
-import { Chip, Empty, Logo, Tap } from '../../components/ui';
+import { Chip, Empty, GinghamBand, Logo, PaperLabel, Tap } from '../../components/ui';
 import { POST_KINDS } from '../../lib/constants';
 import { supabase } from '../../lib/supabase';
 import { colors, fonts, radius, space } from '../../lib/theme';
@@ -22,7 +22,7 @@ export default function Noticeboard() {
       .select('*')
       .eq('is_cancelled', false)
       // hide things that started more than 3 hours ago
-      .or(`starts_at.is.null,starts_at.gte.${new Date(Date.now() - 3 * 3600_000).toISOString()}`)
+      .or(`starts_at.is.null,starts_at.gte."${new Date(Date.now() - 3 * 3600_000).toISOString()}"`)
       .order('created_at', { ascending: false })
       .limit(100);
     if (kind !== 'all') q = q.eq('kind', kind);
@@ -38,8 +38,12 @@ export default function Noticeboard() {
 
   const header = (
     <View>
-      <Logo size={46} />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: space.lg }}>
+      <GinghamBand height={124}>
+        <PaperLabel>
+          <Logo size={40} />
+        </PaperLabel>
+      </GinghamBand>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: space.lg }}>
         <View style={{ flexDirection: 'row', gap: space.sm }}>
           <Chip label="All" selected={kind === 'all'} onPress={() => setKind('all')} />
           {POST_KINDS.map((k) => (

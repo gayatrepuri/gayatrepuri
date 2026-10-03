@@ -9,14 +9,15 @@ import { Sticker } from './Sticker';
 import { Avatar, Body, Card } from './ui';
 
 const TONES = {
-  coffee: 'cream',
-  study: 'blue',
+  coffee: 'blue',
+  study: 'cream',
   event: 'butter',
   rant: 'kraft',
-  collab: 'cream',
-  ticket: 'kraft',
+  collab: 'blue',
+  ticket: 'cream',
   study_participants: 'blue',
   conference: 'butter',
+  poll: 'blue',
   other: 'cream',
 } as const;
 
@@ -29,7 +30,10 @@ export function tiltFor(id: string) {
 
 export function PostCard({ post }: { post: FeedPost }) {
   const info = kindInfo(post.kind);
-  const going = post.capacity ? `${post.attendee_count}/${post.capacity}` : `${post.attendee_count}`;
+  const going =
+    post.kind === 'poll'
+      ? `${post.vote_count ?? 0} ${post.vote_count === 1 ? 'vote' : 'votes'}`
+      : `${post.capacity ? `${post.attendee_count}/${post.capacity}` : post.attendee_count} going`;
 
   return (
     <View style={{ marginBottom: space.xl, marginTop: space.sm }}>
@@ -38,7 +42,7 @@ export function PostCard({ post }: { post: FeedPost }) {
           {post.title}
         </Text>
         <Body muted style={{ fontSize: 12 }}>
-          {formatWhen(post.starts_at)}
+          {post.kind === 'poll' ? 'Tap to vote' : formatWhen(post.starts_at)}
           {post.location ? ` · ${post.location}` : ''}
         </Body>
 
@@ -49,7 +53,7 @@ export function PostCard({ post }: { post: FeedPost }) {
           </Body>
           <Text style={{ fontFamily: fonts.bodyBold, fontSize: 12, color: colors.maroon }}>
             {post.i_joined ? '✓ ' : ''}
-            {going} going
+            {going}
           </Text>
         </View>
       </Card>

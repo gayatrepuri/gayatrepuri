@@ -80,9 +80,9 @@ export default function Person() {
         accepted ? (
           <Button title="Message" sticker="envelope" onPress={() => router.push(`/dm/${id}`)} />
         ) : theyAsked ? (
-          <Button title="Hi back" sticker="waxheart" onPress={sayHi} />
+          <Button title="Hi back" sticker="bulb" onPress={sayHi} />
         ) : (
-          <Button title={pending ? 'Sent' : 'Say hi'} sticker="waxheart" variant={pending ? 'blue' : 'primary'} disabled={pending} onPress={sayHi} />
+          <Button title={pending ? 'Sent' : 'Say hi'} sticker="bulb" variant={pending ? 'blue' : 'primary'} disabled={pending} onPress={sayHi} />
         )
       ) : null}
 

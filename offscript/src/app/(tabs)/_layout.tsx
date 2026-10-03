@@ -19,13 +19,13 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.maroon,
-        tabBarInactiveTintColor: colors.boho,
-        tabBarStyle: { backgroundColor: colors.cream, borderTopColor: colors.line, height: 84, paddingTop: 6 },
+        tabBarInactiveTintColor: colors.blueInk,
+        tabBarStyle: { backgroundColor: colors.babyBlue, borderTopColor: colors.blueStripe, borderTopWidth: 2, height: 84, paddingTop: 6 },
         tabBarLabelStyle: { fontFamily: fonts.body, fontSize: 11 },
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Board', tabBarIcon: icon('clip') }} />
-      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: icon('waxheart') }} />
+      <Tabs.Screen name="matches" options={{ title: 'Matches', tabBarIcon: icon('bulb') }} />
       <Tabs.Screen name="inbox" options={{ title: 'Post', tabBarIcon: icon('envelope') }} />
       <Tabs.Screen name="profile" options={{ title: 'Me', tabBarIcon: icon('bunny') }} />
     </Tabs>

@@ -98,6 +98,7 @@ Save the file (⌘S / Ctrl+S). The `.env` file is deliberately never uploaded to
 1. In Supabase, click **SQL Editor** in the left sidebar, then **+ New query**.
 2. In VS Code, open `supabase/migrations/0001_offscript_schema.sql`. Select everything (⌘A / Ctrl+A), copy it, and paste it into the Supabase SQL editor.
 3. Click **Run**. You should see "Success. No rows returned".
+4. Do the same with `supabase/migrations/0003_polls_and_view_fix.sql` (it adds polls and makes sure everyone can see each other's posts). If Supabase warns about a "security definer view", that's expected. Click **Run** anyway.
 
 That one file creates everything:
 

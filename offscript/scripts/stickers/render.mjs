@@ -32,6 +32,7 @@ const STICKERS = {
   bunny: 'soft', clip: 'metal', button: 'gloss', vinyl: 'gloss', matchbook: 'paper', bow: 'soft',
   coffee: 'gloss', books: 'paper', sparkle: 'metal', camera: 'gloss', goldseal: 'metal',
   discoball: 'gloss', champagne: 'gloss', key: 'metal', seashell: 'soft', star: 'metal',
+  bulb: 'gloss', poll: 'paper',
 };
 
 /** The lighting + texture + shadow filter. `u` scales it to the drawing's units. */

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { handleError } from '../lib/errors';
-import { timeAgo } from '../lib/format';
+import { messageTime } from '../lib/format';
 import { supabase } from '../lib/supabase';
 import { colors, fonts, radius, space } from '../lib/theme';
 import type { ChatMessage } from '../lib/types';
@@ -130,7 +130,7 @@ export function Chat(props: Props) {
                   alignSelf: mine ? 'flex-end' : 'flex-start',
                 }}
               >
-                {timeAgo(item.created_at)}
+                {messageTime(item.created_at)}
               </Text>
             </View>
           );

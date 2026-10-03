@@ -17,6 +17,7 @@ export const POST_KINDS: {
   { kind: 'ticket', label: 'Spare ticket', sticker: 'ticket', example: 'Extra formal hall ticket, Thursday' },
   { kind: 'study_participants', label: 'Participants', sticker: 'envelope', example: '20-min user study, £10 voucher' },
   { kind: 'conference', label: 'Conference buddy', sticker: 'postcard', example: 'Going to NeurIPS alone — anyone?' },
+  { kind: 'poll', label: 'Poll', sticker: 'poll', example: 'Best library to work in?' },
   { kind: 'other', label: 'Other', sticker: 'seashell', example: 'Anything off the script' },
 ];
 
@@ -173,7 +174,7 @@ export const PLUS_PERKS: { text: string; sticker: StickerName }[] = [
   { text: 'Unlimited posts', sticker: 'postcard' },
   { text: 'Join anything', sticker: 'ticket' },
   { text: 'Unlimited hellos', sticker: 'envelope' },
-  { text: 'See every match', sticker: 'waxheart' },
+  { text: 'See every match', sticker: 'bulb' },
   { text: 'Host more events', sticker: 'champagne' },
   { text: 'A little ✦ badge', sticker: 'star' },
 ];

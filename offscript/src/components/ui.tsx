@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, radius, space } from '../lib/theme';
+import { Gingham } from './Gingham';
 import { GoldAvatar } from './GoldFrame';
 import { Sticker, type StickerName } from './Sticker';
 
@@ -92,6 +93,50 @@ export function Screen({
         <View style={[{ flex: 1 }, style]}>{children}</View>
       )}
     </SafeAreaView>
+  );
+}
+
+/** A strip of the landing page's baby-blue gingham across the top of a screen. */
+export function GinghamBand({ children, height = 112 }: { children?: ReactNode; height?: number }) {
+  return (
+    <View
+      style={{
+        height,
+        marginHorizontal: -space.lg,
+        marginTop: -space.lg,
+        marginBottom: space.lg,
+        overflow: 'hidden',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomWidth: 2,
+        borderBottomColor: colors.blueStripe,
+      }}
+    >
+      <Gingham />
+      {children}
+    </View>
+  );
+}
+
+/** A little cream paper label (for titles sitting on the gingham). */
+export function PaperLabel({ children }: { children: ReactNode }) {
+  return (
+    <View
+      style={{
+        backgroundColor: colors.cream,
+        paddingHorizontal: space.xl,
+        paddingVertical: space.xs,
+        borderRadius: radius.sm,
+        transform: [{ rotate: '-1.5deg' }],
+        shadowColor: colors.tamarind,
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 3,
+      }}
+    >
+      {children}
+    </View>
   );
 }
 
@@ -294,7 +339,7 @@ export const styles = StyleSheet.create({
     fontFamily: fonts.bodyBold,
     fontSize: 11,
     letterSpacing: 1.5,
-    color: colors.boho,
+    color: colors.blueInk,
     textTransform: 'uppercase',
     marginBottom: 6,
   },
@@ -311,7 +356,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.cream,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: colors.blueStripe,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontFamily: fonts.body,
@@ -324,8 +369,8 @@ export const styles = StyleSheet.create({
     gap: 5,
     borderRadius: radius.pill,
     borderWidth: 1,
-    borderColor: colors.maroon + '44',
-    backgroundColor: colors.cream,
+    borderColor: colors.sky,
+    backgroundColor: colors.blueWash,
     paddingVertical: 6,
     paddingHorizontal: 12,
   },

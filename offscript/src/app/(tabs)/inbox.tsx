@@ -3,7 +3,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Sticker } from '../../components/Sticker';
-import { Avatar, Body, Card, Empty, H1, Label, Screen, Tap } from '../../components/ui';
+import { Avatar, Body, Card, Empty, GinghamBand, H1, PaperLabel, Label, Screen, Tap } from '../../components/ui';
 import { useMe } from '../../lib/auth';
 import { kindInfo } from '../../lib/constants';
 import { formatWhen } from '../../lib/format';
@@ -39,7 +39,11 @@ export default function Inbox() {
 
   return (
     <Screen>
-      <H1 style={{ textAlign: 'center', marginBottom: space.lg }}>Post</H1>
+      <GinghamBand>
+        <PaperLabel>
+          <H1 style={{ textAlign: 'center' }}>Post</H1>
+        </PaperLabel>
+      </GinghamBand>
 
       {friends.length ? (
         <>
