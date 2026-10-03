@@ -96,14 +96,7 @@ export default function Matches() {
         items={matches}
         onYes={sayHi}
         empty={
-          profile.is_plus ? (
-            <Empty title="that's everyone for now" sticker="swan" />
-          ) : (
-            <View>
-              <Empty title="that's today's five" sticker="swan" />
-              <Button title="See everyone ✦" variant="butter" onPress={() => router.push('/plus')} />
-            </View>
-          )
+          <Empty title="that's everyone for now" sticker="swan" />
         }
         renderCard={(m) => (
           <Card tone="blue" style={{ alignItems: 'center', paddingVertical: space.xl }}>

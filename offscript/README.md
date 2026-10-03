@@ -23,12 +23,12 @@ The look: maroon, butter yellow and baby blue, bold flared headings, typewriter 
 |---|---|---|
 | ![Landing](docs/screens/landing.png) | ![Board](docs/screens/board.png) | ![Profile](docs/screens/profile.png) |
 
-**Built with:** React Native + Expo (SDK 57) · Expo Router · Supabase (database, login, chat, photos, pgvector) · Claude (AI matching) · RevenueCat (subscriptions).
+**Built with:** React Native + Expo (SDK 57) · Expo Router · Supabase (database, login, chat, photos, pgvector) · Claude (AI matching).
 
 ## 👉 Start here
 
 - **[docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)**: everything from installing the tools to publishing on the App Store and Google Play, written for non-coders.
-- **[docs/FREEMIUM_PLAN.md](docs/FREEMIUM_PLAN.md)**: what's free, what's in Plus (£4.99/month), and why.
+- **[docs/MONEY_PLAN.md](docs/MONEY_PLAN.md)**: Offscript is free for everyone. How sponsor cards and event sponsorships pay for it.
 
 ## Quick commands
 

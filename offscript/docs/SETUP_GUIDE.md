@@ -8,7 +8,6 @@ This guide takes you from "I have the code" to "Offscript is on the App Store an
 > - **Folder / project**: the `offscript` folder that holds all the app's code.
 > - **Supabase**: the online database that stores profiles, posts and messages.
 > - **Expo**: the tool that turns the code into an iPhone and Android app.
-> - **RevenueCat**: the service that handles the £4.99 subscriptions with Apple and Google.
 
 ---
 
@@ -16,7 +15,7 @@ This guide takes you from "I have the code" to "Offscript is on the App Store an
 
 - A laptop (Mac or Windows). You need a Mac only if you want to use the iPhone *simulator*. Building for the App Store happens in the cloud, so Windows works too.
 - Your phone (iPhone or Android).
-- About £100 for the Apple and Google developer accounts. You only need these at step 8, not for testing.
+- About £100 for the Apple and Google developer accounts. You only need these at step 9, not for testing.
 - A free account on each of:
   - **GitHub**: https://github.com (where the code lives)
   - **Supabase**: https://supabase.com
@@ -98,7 +97,7 @@ Save the file (⌘S / Ctrl+S). The `.env` file is deliberately never uploaded to
 1. In Supabase, click **SQL Editor** in the left sidebar, then **+ New query**.
 2. In VS Code, open `supabase/migrations/0001_offscript_schema.sql`. Select everything (⌘A / Ctrl+A), copy it, and paste it into the Supabase SQL editor.
 3. Click **Run**. You should see "Success. No rows returned".
-4. Do the same with `supabase/migrations/0003_polls_and_view_fix.sql` (it adds polls and makes sure everyone can see each other's posts). If Supabase warns about a "security definer view", that's expected. Click **Run** anyway.
+4. Do the same, one at a time and in order, with `0002_ai_matching.sql` (only once you've done Step 7½), `0003_polls_and_view_fix.sql` and `0004_free_and_sponsors.sql`. 0003 adds polls and makes sure everyone can see each other's posts. 0004 makes the app free for everyone and adds sponsor cards. If Supabase warns about a "security definer view", that's expected. Click **Run** anyway.
 
 That one file creates everything:
 
@@ -112,10 +111,10 @@ That one file creates everything:
 | `connections` | Match requests ("Say hi") and accepted matches. |
 | `direct_messages` | Private chats between matches. |
 | `blocks`, `reports` | Safety. Apple and Google require these. |
-| `plan_limits` | The free-plan limits. Edit the numbers any time. |
+| `sponsored` | The sponsor cards (ads, sponsored events, perks) shown on the Board. See Step 8. |
 | `allowed_emails` | Individual non-university emails you let in (e.g. app reviewers). |
 
-It also locks the data down, so people can only read and change what they're allowed to. A gmail address can't sign up, and nobody can give themselves Plus.
+It also locks the data down, so people can only read and change what they're allowed to. A gmail address can't sign up.
 
 ---
 
@@ -211,26 +210,24 @@ offscript/
 │   ├── (tabs)/index.tsx      Noticeboard (the main feed)
 │   ├── (tabs)/matches.tsx    Matches + requests
 │   ├── (tabs)/inbox.tsx      Chats
-│   ├── (tabs)/profile.tsx    "Me": your profile, plan, sign out, delete account
+│   ├── (tabs)/profile.tsx    "Me": your profile, sign out, delete account
 │   ├── post/new.tsx          Make a post
 │   ├── post/[id].tsx         A single post (join / leave / cancel)
 │   ├── post/chat/[id].tsx    Group chat for a post
 │   ├── person/[id].tsx       Someone's profile (say hi / report / block)
 │   ├── dm/[id].tsx           Private chat
-│   ├── edit-profile.tsx      Edit answers, photo, privacy
-│   └── plus.tsx              The £4.99 Plus screen
+│   └── edit-profile.tsx      Edit answers, photo, privacy
 ├── src/lib/
 │   ├── theme.ts              ← COLOURS & FONTS
-│   ├── constants.ts          ← post types, research fields, interests, questions, Plus perks
+│   ├── constants.ts          ← post types, research fields, interests, questions
 │   ├── supabase.ts           connects to the database
-│   ├── auth.tsx              keeps track of who's logged in
-│   └── purchases.ts          subscriptions (RevenueCat)
+│   └── auth.tsx              keeps track of who's logged in
 ├── src/components/           reusable pieces (buttons, cards, chat…)
 ├── supabase/migrations/      the database setup (Step 4)
-├── supabase/functions/       the payment webhook (Step 8)
+├── supabase/functions/       the AI matching helper (Step 7½)
 ├── assets/                   app icon + splash screen
 ├── app.json                  app name, icon, bundle ID
-└── docs/                     this guide + the pricing plan
+└── docs/                     this guide + the money plan
 ```
 
 **Easy changes you can make yourself:**
@@ -246,7 +243,7 @@ offscript/
 - **Photos**: people add a portrait during sign-up (or later in Edit), and it's shown in an ornate gold frame (`src/components/GoldFrame.tsx`, image `assets/frame.png`).
 - **Post types, examples, research fields, interest tags, onboarding questions**: `src/lib/constants.ts`.
 - **Allowed universities**: Supabase → **Table Editor → universities → Insert row**.
-- **Free-plan limits**: Supabase → **Table Editor → plan_limits**.
+- **Sponsor cards**: Supabase → **Table Editor → sponsored** (see Step 8).
 
 ---
 
@@ -281,87 +278,83 @@ If no row appears: Supabase → **Edge Functions → analyse-profile → Logs** 
 
 ---
 
-## Step 8: Payments (Offscript Plus, £4.99/month)
+## Step 8: Sponsor cards (how Offscript makes money)
 
-Apple and Google **require** app subscriptions to go through their own payment systems. RevenueCat handles both for you.
+Offscript is free for everyone. The money comes from **sponsor cards**: ads, sponsored events and member perks pinned between posts on the Board, always clearly marked "Sponsored". You agree a deal with a business or event organiser, then add their card yourself. No app update needed. (For who to sell to and what to charge, see [MONEY_PLAN.md](MONEY_PLAN.md).)
 
-### 8a. Developer accounts
-- **Apple**: https://developer.apple.com/programs ($99/year). Enrol as an individual, or as a company if you set up a Ltd (needs a D-U-N-S number). Approval takes 1–2 days.
-- **Google**: https://play.google.com/console ($25 one-off). New personal accounts must run a **closed test with 12 testers for 14 days** before going public, so recruit 12 friends early!
-- Then join Apple's **Small Business Program** (https://developer.apple.com/app-store/small-business-program/) so Apple takes 15% instead of 30%. Google charges 15% on subscriptions automatically.
+### 8a. Add a card
+1. *(Optional picture)* Supabase → **Storage → sponsors → Upload file**. Use a landscape picture (16:9, e.g. 1600×900). Click the uploaded file → **Get URL** → copy it.
+2. Supabase → **Table Editor → sponsored → Insert → Insert row**, and fill in:
 
-### 8b. Create the app in the stores
-- **App Store Connect** (https://appstoreconnect.apple.com) → **Apps → +**. Name "Offscript", bundle ID `com.offscript.app`. If that's taken, choose another and change it in `app.json` too.
-- Then **Subscriptions** → create a group "Offscript Plus" with two subscriptions:
-  - `offscript_plus_monthly`: £4.99, 1 month
-  - `offscript_plus_yearly`: £39.99, 1 year
-  - Optional: add a 7-day free trial as an "Introductory Offer".
-- **Google Play Console** → **Create app** → then **Monetise → Subscriptions** → the same two products.
+| Column | What to put |
+|---|---|
+| `sponsor_name` | Who's paying, e.g. `Fitzbillies` (shown on the card) |
+| `kind` | `ad`, `event` (a sponsored event) or `perk` (a discount for members) |
+| `title` | The big line, up to 80 characters: `Careers in AI: free evening talk` |
+| `body` | Optional extra line, up to 280 characters |
+| `image_url` | The picture URL from step 1, or leave empty |
+| `link_url` | Where tapping goes. Must start with `https://` |
+| `button_label` | Optional, e.g. `Get tickets`. Empty means "Find out more" (or "Get tickets" for events) |
+| `event_starts_at`, `event_location` | Events only: the date/time and place |
+| `universities` | Leave empty for everyone. To show it only at some universities, type e.g. `{"University of Cambridge"}` (exactly as the name appears in the `universities` table) |
+| `adults_only` | Tick for anything with alcohol, nightlife or gambling. It's then never shown to under-18s |
+| `show_from` / `show_until` | When the card starts and stops showing |
+| `weight` | 1–10. Bigger means it comes up more often when several cards run at once |
 
-### 8c. RevenueCat
-1. Sign up at https://www.revenuecat.com and create a project called "Offscript".
-2. Add an **App Store** app and a **Play Store** app, following their on-screen steps to connect each store.
-3. **Product catalog → Entitlements → New**: identifier **`plus`** (exactly that).
-4. Attach both products to the `plus` entitlement.
-5. **Offerings → default** → add a **Monthly** package and an **Annual** package with your products.
-6. **API keys**: copy the iOS key (`appl_…`) and the Android key (`goog_…`) into `.env`:
-   ```
-   EXPO_PUBLIC_REVENUECAT_IOS_KEY=appl_xxx
-   EXPO_PUBLIC_REVENUECAT_ANDROID_KEY=goog_xxx
-   ```
+3. Click **Save**. Pull down on the Board in the app to refresh, and you'll see the card after the 3rd post (then every 6 posts).
 
-### 8d. Tell the database when someone pays (webhook)
-In the terminal, inside the `offscript` folder:
+To pause a card early, untick `is_active`.
+
+### 8b. Show the sponsor how it went
+Supabase → **SQL Editor → + New query**, paste this and click **Run**:
 ```
-npx supabase login
-npx supabase link --project-ref YOUR_PROJECT_ID
-npx supabase functions deploy revenuecat-webhook --no-verify-jwt
-npx supabase secrets set REVENUECAT_WEBHOOK_SECRET=make-up-a-long-random-password-here
+select * from public.sponsor_report;
 ```
-`YOUR_PROJECT_ID` is the `abcdxyz` part of your Supabase URL.
+You get, for each card: **views**, **people reached** (different people who saw it), **taps** and **tap rate**. Copy those numbers into an email to the sponsor. They never see who saw or tapped, only totals.
 
-Then in RevenueCat → **Integrations → Webhooks → Add**:
-- URL: `https://YOUR_PROJECT_ID.supabase.co/functions/v1/revenuecat-webhook`
-- Authorization header: `Bearer make-up-a-long-random-password-here` (the same secret as above, with the word `Bearer` and a space in front)
-
-Now, when someone subscribes, the webhook switches on `is_plus` in their profile and the limits disappear.
-
-> **Testing payments:** Expo Go only *pretends* to buy (RevenueCat's "preview mode"). To test real (sandbox) purchases you need a **development build**:
-> `npx eas-cli@latest build --profile development --platform ios` (or `android`). Install it on your phone, then run `npm run dev-build` (instead of `npx expo start --go`).
->
-> **Give yourself or a friend Plus by hand:** Supabase → Table Editor → profiles → set `is_plus` to `true`.
+### 8c. Let sponsors find you
+Add this line to your `.env` with the email you want sponsors to use:
+```
+EXPO_PUBLIC_SPONSOR_EMAIL=you@example.com
+```
+A small "sponsor offscript" link then appears on the **Me** screen and opens an email to you.
 
 ---
 
 ## Step 9: Build & publish to the App Store and Google Play
 
-### 9a. One-time setup
+### 9a. Developer accounts
+- **Apple**: https://developer.apple.com/programs ($99/year). Enrol as an individual, or as a company if you set up a Ltd (needs a D-U-N-S number). Approval takes 1–2 days.
+- **Google**: https://play.google.com/console ($25 one-off). New personal accounts must run a **closed test with 12 testers for 14 days** before going public, so recruit 12 friends early!
+- **App Store Connect** (https://appstoreconnect.apple.com) → **Apps → +**. Name "Offscript", bundle ID `com.offscript.app`. If that's taken, choose another and change it in `app.json` too. In **Google Play Console** → **Create app**. Choose **Free**. There are no in-app purchases.
+
+### 9b. One-time setup
 ```
 npx eas-cli@latest login
 npx eas-cli@latest init
 ```
 This links the project to your Expo account.
 
-The `.env` file isn't uploaded to the build servers, so give Expo your keys too. Run this once for each of the four lines in `.env`:
+The `.env` file isn't uploaded to the build servers, so give Expo your keys too. Run this once for each line in `.env`:
 ```
 npx eas-cli@latest env:create --environment production --visibility plaintext --name EXPO_PUBLIC_SUPABASE_URL --value https://abcdxyz.supabase.co
 ```
-Repeat with `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_REVENUECAT_IOS_KEY` and `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY`. Do it for `--environment preview` and `--environment development` too.
+Repeat with `EXPO_PUBLIC_SUPABASE_ANON_KEY` (and `EXPO_PUBLIC_SPONSOR_EMAIL` if you set it). Do it for `--environment preview` and `--environment development` too.
 
-### 9b. Build
+### 9c. Build
 ```
 npx eas-cli@latest build --platform all --profile production
 ```
 The first time, it asks to log into your Apple account and offers to create signing certificates. Say **yes** to everything. A build takes about 15–30 minutes in the cloud, and you get a link when it's done.
 
-### 9c. Submit
+### 9d. Submit
 ```
 npx eas-cli@latest submit --platform ios
 npx eas-cli@latest submit --platform android
 ```
 For Android, the first upload has to be done by hand in Play Console (Testing → Closed testing → Create release → upload the `.aab` file from the build page). After that, `submit` works.
 
-### 9d. What the stores will ask you for
+### 9e. What the stores will ask you for
 - **Privacy policy URL** and **support URL**. A free Notion page or Carrd site is fine. The privacy policy must say you store: university email, name, profile answers, photos, posts and messages, held by Supabase in London. It must also say people can delete their account in-app (Me → Delete my account).
 - **A demo account for the reviewer.** They can't receive codes at a uni email, so:
   1. Supabase → Table Editor → `allowed_emails` → insert a row with `reviewer@yourdomain.com`.
@@ -370,12 +363,13 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
   4. Give that email and password to Apple and Google in the review notes, with this line: "On the first screen, once the letter is out, press and hold the word Offscript to show the password field." 
 - **Age rating**: the app has user chat and meetups, so answer the questionnaire honestly. Expect **17+ / Mature**. Say users must be 18+ in your terms.
 - **Screenshots**: run the app, take screenshots on your phone (6.7" iPhone and an Android phone), and upload them.
-- **App Privacy "nutrition label"** (Apple): Contact info (email), User content (photos, messages, other), Identifiers (user ID), all **linked to the user**, **not used for tracking**.
+- **App Privacy "nutrition label"** (Apple): Contact info (email), User content (photos, messages, other), Identifiers (user ID), all **linked to the user**, **not used for tracking**. Also tick **Usage data → Product interaction** (we count sponsor card views and taps), linked to the user, used for **analytics**, not tracking. Sponsor cards are sold by you directly and no ad company gets any data, so there's no "Allow tracking?" pop-up and no tracking label.
+- **Ads question**: both stores ask "Does your app contain ads?". Answer **Yes**, because sponsor cards count.
 - **Apple's rules for apps with user content**: report (✅ built in), block (✅ built in), a way to contact you (put your email in the support URL), and you must act on reports within 24h. Check reports: Supabase → Table Editor → `reports`. To ban someone: Authentication → Users → … → **Delete user**.
 
-### 9e. After launch: updating the app
+### 9f. After launch: updating the app
 - Small changes (text, colours, screens): `npx eas-cli@latest update --channel production` sends the update straight to users' phones, no review needed.
-- New native features or a new app icon: build and submit again (steps 9b–9c).
+- New native features or a new app icon: build and submit again (steps 9c–9d).
 - Database changes: edit in Supabase directly; no app update needed.
 
 ---
@@ -388,14 +382,15 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 | Check reports | Table Editor → `reports` |
 | Remove a post | Table Editor → `posts` → delete the row |
 | Ban someone | Authentication → Users → Delete user |
-| Change free limits | Table Editor → `plan_limits` |
+| Add or pause a sponsor card | Table Editor → `sponsored` (Step 8) |
 | Add a university | Table Editor → `universities` |
 | Let one person in without a uni email | Table Editor → `allowed_emails` |
-| See subscribers & revenue | RevenueCat dashboard |
+| Sponsor numbers | SQL Editor → `select * from public.sponsor_report;` |
 
 **Legal checklist (UK):**
 - Pay the **ICO data protection fee** (£40/year): https://ico.org.uk/fee
 - Publish a privacy policy and terms (18+ only, be kind, no harassment, you can remove content).
+- Sponsor cards must say "Sponsored" (the app does this for you) and follow the UK ad rules (CAP Code): https://www.asa.org.uk/codes-and-rulings/advertising-codes/non-broadcast-code.html
 - Consider setting up a Ltd company before you take money (Companies House, £50). It protects you personally.
 
 ---
@@ -414,5 +409,6 @@ For Android, the first upload has to be done by hand in Play Console (Testing �
 | Red error screen right after `git pull` | The update added new building blocks. Run `npm install`, then start again with `npx expo start --go --clear`. |
 | "No usable data found" when scanning | Expo started in development-build mode. Run `npx expo start --go` (or press **s**). |
 | Weird errors after installing something | `npx expo install --fix`, then `npx expo start --go --clear`. |
-| "Time to go Plus?" popup while testing | You hit a free limit. Set `is_plus = true` on your profile, or raise `plan_limits`. |
+| "FREE_LIMIT" error when posting | You haven't run `0004_free_and_sponsors.sql` yet (Step 4). |
+| Sponsor card doesn't show | Check `show_from` is in the past, `show_until` in the future, `is_active` ticked, and `universities` empty or matching. Then pull down on the Board to refresh. |
 | Want help changing something | Open the project in VS Code with an AI coding assistant (like Claude Code) and describe the change in plain English. |

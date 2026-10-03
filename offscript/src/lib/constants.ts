@@ -167,14 +167,3 @@ export const PROFILE_FIELDS: { key: string; label: string; sticker: StickerName 
   ...FUN_QUESTIONS.map(({ key, label, sticker }) => ({ key, label, sticker })),
 ];
 export const VISIBILITY_OPTIONS = PROFILE_FIELDS;
-
-// Shown on the paywall. Keep in sync with plan_limits in the database.
-export const PLUS_PRICE_LABEL = '£4.99 / month';
-export const PLUS_PERKS: { text: string; sticker: StickerName }[] = [
-  { text: 'Unlimited posts', sticker: 'postcard' },
-  { text: 'Join anything', sticker: 'ticket' },
-  { text: 'Unlimited hellos', sticker: 'envelope' },
-  { text: 'See every match', sticker: 'bulb' },
-  { text: 'Host more events', sticker: 'champagne' },
-  { text: 'A little ✦ badge', sticker: 'star' },
-];

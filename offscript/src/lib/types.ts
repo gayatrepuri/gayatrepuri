@@ -99,10 +99,18 @@ export type ChatMessage = {
   created_at: string;
 };
 
-export type Usage = {
-  is_plus: boolean;
-  posts_this_month: number;
-  joins_this_month: number;
-  connections_this_week: number;
-  limits: Record<string, number>;
+// A sponsor card on the Board (an ad, a sponsored event or a member perk).
+// You add these in Supabase → Table Editor → sponsored.
+export type Sponsored = {
+  id: string;
+  sponsor_name: string;
+  kind: 'ad' | 'event' | 'perk';
+  title: string;
+  body: string | null;
+  image_url: string | null;
+  link_url: string | null;
+  button_label: string | null;
+  event_starts_at: string | null;
+  event_location: string | null;
+  weight: number;
 };

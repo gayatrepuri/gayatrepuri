@@ -1,7 +1,6 @@
 // Keeps track of who is logged in and their profile, for the whole app.
 import type { Session } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { identifyPurchaser, resetPurchaser } from './purchases';
 import { supabase } from './supabase';
 import type { Profile } from './types';
 
@@ -42,7 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       loadProfile(newSession?.user.id);
-      if (newSession?.user.id) identifyPurchaser(newSession.user.id);
     });
     return () => sub.subscription.unsubscribe();
   }, [loadProfile]);
@@ -56,7 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     refreshProfile: () => loadProfile(session?.user.id),
     signOut: async () => {
-      await resetPurchaser();
       await supabase.auth.signOut();
     },
   };

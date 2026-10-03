@@ -65,7 +65,6 @@ function RootStack() {
         <Stack.Screen name="person/[id]" options={{ headerShown: true, title: '' }} />
         <Stack.Screen name="dm/[id]" options={{ headerShown: true, title: '' }} />
         <Stack.Screen name="edit-profile" options={{ headerShown: true, title: 'Edit profile' }} />
-        <Stack.Screen name="plus" options={{ presentation: 'modal' }} />
       </Stack.Protected>
     </Stack>
   );

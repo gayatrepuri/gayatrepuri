@@ -71,7 +71,6 @@ export default function Person() {
         <GoldFrame uri={person.avatar_url} name={person.display_name} width={230} />
         <H1 style={{ marginTop: space.md, textAlign: 'center' }}>
           {person.display_name}
-          {person.is_plus ? ' ✦' : ''}
         </H1>
         <Body muted>{person.university}</Body>
       </View>
