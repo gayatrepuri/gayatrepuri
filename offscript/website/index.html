@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Offscript · launching soon</title>
+  <meta name="description" content="Coffee runs, study sessions, collabs and kindred minds, for academics. Free, always. Save your spot." />
+  <meta name="theme-color" content="#6B0B0C" />
+  <meta property="og:title" content="Offscript · launching soon" />
+  <meta property="og:description" content="Coffee runs, study sessions, collabs and kindred minds, for academics. Save your spot." />
+  <meta property="og:image" content="og-image.jpg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="favicon.png" />
+  <link rel="preload" href="fonts/MrsSaintDelafield_400Regular.ttf" as="font" type="font/ttf" crossorigin />
+  <link rel="preload" href="fonts/RammettoOne_400Regular.ttf" as="font" type="font/ttf" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ───────────── 1. The envelope ───────────── -->
+  <header class="hero" id="top">
+    <div class="gingham" aria-hidden="true"><svg class="stars"></svg></div>
+
+    <div class="stage" id="stage">
+      <div class="env-back"></div>
+
+      <div class="flap" aria-hidden="true">
+        <svg class="flap-svg"></svg>
+        <img class="flap-heart" src="stickers/waxheart.png" alt="" />
+      </div>
+
+      <div class="letter" id="letter">
+        <svg class="paper" aria-hidden="true"></svg>
+        <img class="seal" src="stickers/goldseal.png" alt="" />
+
+        <!-- before signing up -->
+        <div class="face" id="face-join">
+          <h1 class="logo">Offscript</h1>
+          <div class="stamp" aria-label="Launching soon">launching soon</div>
+          <p class="tag">coffee, collabs &amp; kindred minds<br />for academics</p>
+          <form id="join" novalidate>
+            <label class="sr-only" for="email">Your email</label>
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="your email" required />
+            <!-- bots fill this in; people never see it -->
+            <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button class="btn" type="submit"><span>Save my spot</span></button>
+            <p class="msg" id="join-msg" role="status" aria-live="polite"></p>
+          </form>
+          <p class="count" id="count" hidden></p>
+        </div>
+
+        <!-- after signing up -->
+        <div class="face" id="face-done" hidden>
+          <img class="stamped" src="stickers/waxseal.png" alt="" />
+          <p class="script big" id="done-title">you're in ✿</p>
+          <p class="pos" id="done-pos"></p>
+          <p class="small">we'll write the moment the doors open</p>
+          <button class="btn" type="button" id="share"><span>Bring your people</span></button>
+          <button class="link" type="button" id="more">tell us a little more →</button>
+        </div>
+      </div>
+
+      <div class="pocket" aria-hidden="true">
+        <svg class="pocket-svg"></svg>
+        <img class="bow" src="stickers/bow.png" alt="" />
+      </div>
+    </div>
+
+    <a class="peek" href="#board">peek inside ↓</a>
+  </header>
+
+  <!-- ───────────── 2. Ticker ───────────── -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>coffee runs ✦ study sessions ✦ spare tickets ✦ conference buddies ✦ collabs ✦ rants ✦ polls ✦ study participants wanted ✦ </span>
+      <span>coffee runs ✦ study sessions ✦ spare tickets ✦ conference buddies ✦ collabs ✦ rants ✦ polls ✦ study participants wanted ✦ </span>
+    </div>
+  </div>
+
+  <main>
+    <!-- ───────────── 3. The noticeboard ───────────── -->
+    <section class="section" id="board">
+      <p class="kicker">the noticeboard</p>
+      <h2>pin it. someone's in.</h2>
+      <div class="board">
+        <article class="note blue reveal" style="--r:-2deg">
+          <img src="stickers/coffee.png" alt="" class="pin" />
+          <h3>Coffee before the 10am seminar?</h3>
+          <p>Tomorrow · 09:15</p><span class="going">2/4 going</span>
+        </article>
+        <article class="note cream reveal" style="--r:1.5deg">
+          <img src="stickers/ticket.png" alt="" class="pin" />
+          <h3>Spare ticket: formal dinner Friday</h3>
+          <p>Fri · 19:30</p><span class="going">1 left</span>
+        </article>
+        <article class="note butter reveal" style="--r:-1deg">
+          <img src="stickers/books.png" alt="" class="pin" />
+          <h3>Anyone else writing up? Library, 9 to 5</h3>
+          <p>Every weekday</p><span class="going">6 going</span>
+        </article>
+        <article class="note kraft reveal" style="--r:2deg">
+          <img src="stickers/matchbook.png" alt="" class="pin" />
+          <h3>Rant: reviewer 2 strikes again</h3>
+          <p>Tonight · the pub</p><span class="going">9 going</span>
+        </article>
+        <article class="note blue reveal" style="--r:-1.5deg">
+          <img src="stickers/clip.png" alt="" class="pin" />
+          <h3>Need 20 people for a 15-min study</h3>
+          <p>This week · £10 voucher</p><span class="going">12/20</span>
+        </article>
+        <article class="note cream reveal" style="--r:1deg">
+          <img src="stickers/poll.png" alt="" class="pin" />
+          <h3>Poll: best library to cry in?</h3>
+          <div class="mini-poll"><i style="--w:62%">the old one</i><i style="--w:38%">the new one</i></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ───────────── 4. Matching ───────────── -->
+    <section class="section split">
+      <div>
+        <p class="kicker">matches</p>
+        <h2>matched on minds,<br />not looks.</h2>
+        <p class="lead">Our AI reads what you're working on and what you love, and finds the people you'd actually talk to for hours.</p>
+      </div>
+      <div class="deck" id="deck" aria-hidden="true">
+        <div class="mcard"><div class="frame">AK</div><b>Aiko K.</b><small>PhD · Quantum computing</small><div class="chips"><em>quantum physics</em><em>melancholy indie</em></div></div>
+        <div class="mcard"><div class="frame">TO</div><b>Tomi O.</b><small>Postdoc · Neuroscience</small><div class="chips"><em>sleep science</em><em>bouldering</em></div></div>
+        <div class="mcard"><div class="frame">LR</div><b>Lucía R.</b><small>Masters · Climate policy</small><div class="chips"><em>rewilding</em><em>snowy places</em></div></div>
+        <img class="deck-bulb" src="stickers/bulb.png" alt="" />
+      </div>
+    </section>
+
+    <!-- ───────────── 5. The questions ───────────── -->
+    <section class="section">
+      <p class="kicker">your profile</p>
+      <h2>the questions that matter.</h2>
+      <p class="lead center">tap a card ✦</p>
+      <div class="qs">
+        <button class="q reveal" type="button" style="--r:-3deg"><span class="q-in"><span class="q-front"><img src="stickers/seashell.png" alt="" />favourite place to cry</span><span class="q-back">third floor of the library, by the radiator</span></span></button>
+        <button class="q reveal" type="button" style="--r:2deg"><span class="q-in"><span class="q-front"><img src="stickers/coffee.png" alt="" />coffee order</span><span class="q-back">oat flat white, extra hot, no judgement</span></span></button>
+        <button class="q reveal" type="button" style="--r:-1deg"><span class="q-in"><span class="q-front"><img src="stickers/postcard.png" alt="" />dream destination</span><span class="q-back">Hokkaido in winter</span></span></button>
+        <button class="q reveal" type="button" style="--r:3deg"><span class="q-in"><span class="q-front"><img src="stickers/headphones.png" alt="" />song on repeat</span><span class="q-back">Motion Sickness, Phoebe Bridgers</span></span></button>
+      </div>
+      <p class="lead center">you choose what's shown. always.</p>
+    </section>
+
+    <!-- ───────────── 6. Last call ───────────── -->
+    <section class="cta">
+      <div class="gingham" aria-hidden="true"></div>
+      <div class="cta-card reveal">
+        <img src="stickers/envelope.png" alt="" class="cta-sticker" />
+        <h2>your invite's in the post.</h2>
+        <p class="script">free, always.</p>
+        <a class="btn" href="#top" id="cta-btn"><span>Save my spot</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="logo small-logo">Offscript</span>
+    <p>made for academics · © <span id="year"></span></p>
+    <p class="links">
+      <a id="insta" href="#" hidden>instagram</a>
+      <a id="contact" href="#" hidden>say hello</a>
+    </p>
+    <details>
+      <summary>privacy</summary>
+      <p>We only use your email to tell you when Offscript opens, plus the optional answers you give to help us decide where to launch. We never sell or share it. Want off the list? Email us and we'll delete you.</p>
+    </details>
+  </footer>
+
+  <!-- ───────────── "tell us more" ───────────── -->
+  <dialog id="more-dialog">
+    <form method="dialog" id="more-form">
+      <h3>a little more?</h3>
+      <label>university<input id="uni" maxlength="80" placeholder="where you study or work" /></label>
+      <p class="label">you are a…</p>
+      <div class="chips pick" data-name="stage" data-single>
+        <button type="button">Masters</button><button type="button">PhD</button><button type="button">Postdoc</button><button type="button">Staff</button><button type="button">Other</button>
+      </div>
+      <p class="label">you're here for…</p>
+      <div class="chips pick" data-name="wants">
+        <button type="button" data-v="coffee"><img src="stickers/coffee.png" alt="" />coffee runs</button>
+        <button type="button" data-v="study"><img src="stickers/books.png" alt="" />study sessions</button>
+        <button type="button" data-v="collab"><img src="stickers/bulb.png" alt="" />collabs</button>
+        <button type="button" data-v="events"><img src="stickers/champagne.png" alt="" />events</button>
+        <button type="button" data-v="conference"><img src="stickers/postcard.png" alt="" />conference buddies</button>
+        <button type="button" data-v="participants"><img src="stickers/clip.png" alt="" />study participants</button>
+        <button type="button" data-v="friends"><img src="stickers/butterfly.png" alt="" />new friends</button>
+      </div>
+      <div class="row">
+        <button class="link" value="cancel" type="submit">skip</button>
+        <button class="btn" id="more-save" type="button"><span>Done</span></button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
