@@ -34,6 +34,18 @@
     return data;
   }
 
+  // ── the "you're in" email (supabase/functions/waitlist-welcome) ──
+  // Only new sign-ups have a token, so each person gets it once. If the
+  // function isn't set up yet this quietly does nothing.
+  function sendWelcome(token) {
+    fetch(`${cfg.SUPABASE_URL}/functions/v1/waitlist-welcome`, {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json', apikey: cfg.SUPABASE_KEY, Authorization: `Bearer ${cfg.SUPABASE_KEY}` },
+      body: JSON.stringify({ token }),
+    }).catch(() => {});
+  }
+
   // ── torn paper (the same tear as the app's TornPaper) ──
   function tornPath(w, h, seed) {
     let s = seed * 9973;
@@ -229,6 +241,7 @@
       });
       const info = { already: res.already, position: res.position, token: res.token || null, ref: res.ref };
       store.set(info);
+      if (LIVE && info.token) sendWelcome(info.token);
       showDone(info, true);
     } catch (err) {
       msg.textContent = err.message === 'bot' ? '' : err.message;
