@@ -14,6 +14,7 @@
   const store = {
     get() { try { return JSON.parse(localStorage.getItem('offscript-joined') || 'null'); } catch { return null; } },
     set(v) { try { localStorage.setItem('offscript-joined', JSON.stringify(v)); } catch {} },
+    clear() { try { localStorage.removeItem('offscript-joined'); } catch {} },
   };
 
   // ── talk to Supabase ──
@@ -248,6 +249,16 @@
     } finally {
       btn.disabled = false; btn.firstElementChild.textContent = 'Save my spot';
     }
+  });
+
+  // ── "not you?": forget this device's sign-up and show the form again ──
+  $('#again').addEventListener('click', () => {
+    store.clear();
+    form.reset();
+    msg.textContent = '';
+    $('#face-done').hidden = true;
+    $('#face-join').hidden = false;
+    email.focus();
   });
 
   // ── "bring your people" ──
