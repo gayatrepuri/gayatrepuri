@@ -47,7 +47,9 @@ function createOffscriptSurvey() {
     .setShowLinkToRespondAgain(false)
     .setConfirmationMessage(
       'Thank you! ✿ Your answers genuinely shape what we build.\n\n' +
-        'Want to be first in? Save your spot at https://offscriptapp.uk'
+        'If these questions made you curious about what we\'re building, and you\'d like to use it, ' +
+        'sign up for early access here:\n' +
+        'https://offscriptapp.uk/?src=survey'
     );
 
   // ── Section 1: About you ─────────────────────────────────────────
