@@ -21,7 +21,7 @@
 const FEATURES = [
   'Coffee runs (quick coffee with someone nearby)',
   'Study sessions (library / café study buddies)',
-  'Events & spare tickets',
+  'Events & spare tickets (e.g. an extra formal hall ticket)',
   'Collabs (find people to work on projects with)',
   'Study participants wanted (recruit or take part in research)',
   'Conference buddies',
@@ -154,7 +154,7 @@ function createOffscriptSurvey() {
     .setTitle('The idea')
     .setHelpText(
       'Offscript is a free app, only for people with a university email. You can:\n' +
-        '• post or join things: coffee runs, study sessions, events, spare tickets, collabs, conference buddies, rants and polls\n' +
+        '• post or join things: coffee runs, study sessions, events, spare tickets (like an extra formal hall ticket), collabs, conference buddies, rants and polls\n' +
         '• get matched with people whose research or interests are close to yours (not a dating app)\n' +
         '• chat with your matches and with everyone going to the same meetup\n' +
         '• build a profile with fun questions, and choose exactly which answers others see'
