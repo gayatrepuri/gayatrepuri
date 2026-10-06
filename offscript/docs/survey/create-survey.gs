@@ -32,12 +32,12 @@ const FEATURES = [
 ];
 
 function createOffscriptSurvey() {
-  const form = FormApp.create('Offscript: 3 quick minutes for academics');
+  const form = FormApp.create('Offscript: 4 quick minutes for academics');
   form
     .setDescription(
       'We are building Offscript, a free app for university students and researchers to meet each other ' +
         'for coffee, study sessions, events and collaborations.\n\n' +
-        'Before we launch, we want honest answers, including "no thanks". It takes about 3 minutes. ' +
+        'Before we launch, we want honest answers, including "no thanks". It takes about 4 minutes. ' +
         'The survey is anonymous unless you choose to leave your email at the end. ' +
         'Answers are only used to shape Offscript and are never sold or shared.'
     )
@@ -106,6 +106,42 @@ function createOffscriptSurvey() {
     .setRequired(true);
 
   form
+    .addMultipleChoiceItem()
+    .setTitle('Which platform do you rely on most to connect with people outside your course or cohort, before you have met them in person?')
+    .setChoiceValues([
+      'Instagram',
+      'LinkedIn',
+      'WhatsApp',
+      'Snapchat',
+      'Discord',
+      'TikTok',
+      'Facebook groups',
+      'Reddit',
+      'Slack or Microsoft Teams',
+      'I don\'t really connect with people before meeting them',
+    ])
+    .showOtherOption(true)
+    .setRequired(true);
+
+  form
+    .addMultipleChoiceItem()
+    .setTitle('Once you\'re settled in, how often do you miss events or important information because it gets lost in WhatsApp group chats?')
+    .setChoiceValues(['Never', 'Rarely', 'Sometimes', 'Often', 'Very often', 'I\'m not in many group chats'])
+    .setRequired(true);
+
+  form
+    .addMultipleChoiceItem()
+    .setTitle('Has an event (a talk, exhibition, gig, workshop…) ever interested you, but you skipped it because nobody you knew wanted to go?')
+    .setChoiceValues(['Yes, often', 'Yes, a few times', 'Once or twice', 'Never', 'I\'m happy going to things alone'])
+    .setRequired(true);
+
+  form
+    .addMultipleChoiceItem()
+    .setTitle('Have you ever held back from reaching out to someone on an app (e.g. Instagram DMs, Bumble BFF, Hinge) because it might come across as romantic or awkward, when you only wanted a friendly or intellectual chat?')
+    .setChoiceValues(['Yes, often', 'Sometimes', 'Rarely', 'Never', 'I don\'t reach out to people on apps'])
+    .setRequired(true);
+
+  form
     .addParagraphTextItem()
     .setTitle('What is the hardest part about meeting people at uni?')
     .setHelpText('Optional, but the most useful answer for us.');
@@ -127,6 +163,20 @@ function createOffscriptSurvey() {
     .setTitle('How likely are you to try Offscript when it launches?')
     .setBounds(1, 5)
     .setLabels('Definitely not', 'Definitely')
+    .setRequired(true);
+
+  form
+    .addScaleItem()
+    .setTitle('Would reaching out to someone feel less awkward on an app that is clearly only for study, research and shared interests (not dating)?')
+    .setBounds(1, 5)
+    .setLabels('No different', 'Much less awkward')
+    .setRequired(true);
+
+  form
+    .addScaleItem()
+    .setTitle('If you could easily find someone with similar interests to go with, would you go to more talks, events and workshops?')
+    .setBounds(1, 5)
+    .setLabels('No, the same', 'Yes, a lot more')
     .setRequired(true);
 
   form
