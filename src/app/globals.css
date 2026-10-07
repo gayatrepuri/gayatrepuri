@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+html {
+  background: var(--color-jet-tint);
+  color: var(--color-jungle);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Numbers line up in columns. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-jungle);
+  outline-offset: 2px;
+}
+.on-dark :focus-visible {
+  outline-color: var(--color-jet);
+}

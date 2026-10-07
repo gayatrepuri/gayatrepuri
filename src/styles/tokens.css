@@ -1,0 +1,38 @@
+/*
+ * ─────────────────────────────────────────────────────────────
+ * DESIGN TOKENS: the only colours, fonts and shapes the app uses.
+ * Change a value here and it changes everywhere.
+ *
+ * Contrast (WCAG AA needs 4.5 for normal text, 3 for large text/lines):
+ *   jet-tint on jungle   14.9  pass   (main light-on-dark text)
+ *   jet on jungle        10.6  pass
+ *   jungle on jet / tint 10.6 / 14.9  pass
+ *   slate on jungle       4.66 pass   (links / highlights on dark only)
+ *   granite on jet-tint   5.28 pass   (secondary text on light)
+ *   granite on jet        3.74 FAIL for small text: large text / lines only
+ *   slate on jet / tint   2.3 / 3.2 FAIL for text: lines and markers only
+ *   granite, olive on jungle 2.8 / 3.1 FAIL for text: borders only
+ * ─────────────────────────────────────────────────────────────
+ */
+
+@theme {
+  /* Remove Tailwind's built-in colours so only this palette can be used. */
+  --color-*: initial;
+
+  --color-jungle: #171f22; /* Dark Jungle Green: dark background, text on light */
+  --color-granite: #636467; /* Granite Gray: secondary text on light, borders */
+  --color-olive: #666b64; /* Olive Granite: secondary surfaces, warm contrast */
+  --color-slate: #748b91; /* Light Slate Gray: highlights, links on dark, chart lines */
+  --color-jet: #c1d1cf; /* Jet Stream: light surfaces, text on dark */
+  --color-jet-tint: #eef3f2; /* Derived near-white tint of Jet Stream: page background on light */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Fonts (loaded in src/app/layout.tsx) */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Square, technical corners: no playful rounding. */
+  --radius-*: initial;
+  --radius-sm: 2px;
+}
