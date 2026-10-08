@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/config/site";
 import { buttonClass } from "@/components/ui";
+import { startDemo } from "@/app/demo/actions";
 
 // Temporary home page. The full marketing landing page is built in Phase 6.
 export default function Home() {
@@ -9,9 +10,14 @@ export default function Home() {
       <div className="mx-auto w-full max-w-3xl">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-jet-tint">{site.name}</p>
         <h1 className="mt-6 text-4xl font-medium leading-tight text-jet-tint">{site.shortDescription}</h1>
-        <div className="mt-10 flex gap-4">
-          <Link href="/app" className={buttonClass("secondary")}>
-            Open the tool
+        <div className="mt-10 flex flex-wrap gap-4">
+          <form action={startDemo}>
+            <button type="submit" className={buttonClass("secondary")}>
+              Try the demo
+            </button>
+          </form>
+          <Link href="/app" className="inline-flex items-center px-4 py-2 text-sm font-medium text-jet-tint underline underline-offset-4 hover:bg-olive">
+            Sign in
           </Link>
         </div>
         <p className="mt-16 border-t border-olive pt-4 text-xs text-jet">Prototype. Landing page coming in Phase 6.</p>

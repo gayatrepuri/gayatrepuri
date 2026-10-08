@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/config/site";
-import { Notice } from "@/components/ui";
+import { Button, Notice } from "@/components/ui";
+import { startDemo } from "@/app/demo/actions";
 import { hasSupabaseEnv } from "@/lib/env";
 import { LoginForm } from "./login-form";
 
@@ -32,6 +33,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
                 </div>
               )}
               <LoginForm next={next} />
+              <form action={startDemo} className="mt-10 border-t border-jet pt-8">
+                <p className="mb-3 text-sm text-granite">Just looking? Explore a sample assembly without an account.</p>
+                <Button type="submit" variant="secondary" className="w-full">
+                  Try the demo
+                </Button>
+              </form>
             </>
           )}
         </div>

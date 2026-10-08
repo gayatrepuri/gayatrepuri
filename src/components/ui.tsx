@@ -13,7 +13,7 @@ const buttonStyles: Record<ButtonVariant, string> = {
 };
 
 export function buttonClass(variant: ButtonVariant = "primary", extra = "") {
-  return `inline-flex items-center justify-center gap-2 rounded-sm px-4 py-2 text-sm font-medium tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${buttonStyles[variant]} ${extra}`;
+  return `inline-flex items-center justify-center gap-2 rounded-sm px-4 py-2 text-sm font-medium tracking-wide transition-colors disabled:cursor-not-allowed disabled:border-jet disabled:bg-jet disabled:text-jungle ${buttonStyles[variant]} ${extra}`;
 }
 
 export function Button({

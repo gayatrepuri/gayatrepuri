@@ -1,9 +1,12 @@
-import { Card } from "@/components/ui";
+import Link from "next/link";
+import { Button, Card, Notice } from "@/components/ui";
+import { startDemo } from "@/app/demo/actions";
 import { anthropicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { NewAssemblyForm } from "./new-assembly-form";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: PageProps<"/app">) {
+  const { error: errorParam } = await searchParams;
   const supabase = await createClient();
   const { data: assemblies, error } = await supabase
     .from("assemblies")
@@ -35,8 +38,16 @@ export default async function DashboardPage() {
         </p>
       </div>
 
+      {typeof errorParam === "string" && <Notice tone="error">{errorParam}</Notice>}
+
       <Card>
         <NewAssemblyForm />
+        <form action={startDemo} className="mt-6 flex flex-wrap items-center gap-4 border-t border-jet pt-6">
+          <Button type="submit" variant="secondary">
+            Load the demo assembly
+          </Button>
+          <p className="text-sm text-granite">A 31-part conveyor drive unit with invented data, ready to explore.</p>
+        </form>
       </Card>
 
       <section aria-labelledby="list-heading">
@@ -47,8 +58,10 @@ export default async function DashboardPage() {
           <ul className="divide-y divide-jet border-y border-jet">
             {assemblies.map((a) => (
               <li key={a.id} className="flex items-center justify-between py-3 text-sm">
-                <span className="font-medium">
-                  {a.name}
+                <span>
+                  <Link href={`/app/assemblies/${a.id}`} className="font-medium underline underline-offset-4">
+                    {a.name}
+                  </Link>
                   {a.is_demo && <span className="ml-2 text-xs uppercase tracking-wider text-granite">Demo</span>}
                 </span>
                 <span className="num text-granite">{new Date(a.created_at).toISOString().slice(0, 10)}</span>

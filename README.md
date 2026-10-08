@@ -10,7 +10,10 @@ A web app for design engineers at manufacturers of configurable machinery. It su
 |---|---|
 | Product name | `src/config/site.ts` |
 | Colours, fonts, corner style (design tokens) | `src/styles/tokens.css` |
-| Database setup script | `supabase/migrations/0001_initial_schema.sql` |
+| Database setup scripts (run in order) | `supabase/migrations/` |
+| Demo assembly data | `src/lib/demo/conveyor-drive.ts` |
+| Column names recognised on BOM import | `src/lib/bom/fields.ts` |
+| File readers (CSV, Excel; add STEP here later) | `src/lib/importers/index.ts` |
 | Settings template (keys) | `.env.example` |
 
 ## Settings ("environment variables")
