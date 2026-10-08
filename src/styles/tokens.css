@@ -12,6 +12,9 @@
  *   granite on jet        3.74 FAIL for small text: large text / lines only
  *   slate on jet / tint   2.3 / 3.2 FAIL for text: lines and markers only
  *   granite, olive on jungle 2.8 / 3.1 FAIL for text: borders only
+ *   jungle on slate       4.66 pass   (landing-page coloured bands: stats, waitlist)
+ *   jet-tint on olive     4.86 pass   (hover / selected surfaces)
+ *   jet on olive          3.45 FAIL for small text: never put Jet Stream text on Olive Granite
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -29,9 +32,10 @@
   --color-current: currentColor;
 
   /* Fonts (loaded in src/app/layout.tsx) */
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jb-mono), ui-monospace, monospace;
-  --font-display: var(--font-space-grotesk), var(--font-plex-sans), ui-sans-serif, sans-serif;
+  --font-display: var(--font-archivo), ui-sans-serif, sans-serif;
+  --font-accent: var(--font-instrument-serif), ui-serif, Georgia, serif;
 
   /* Square, technical corners: no playful rounding. */
   --radius-*: initial;

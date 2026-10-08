@@ -1,16 +1,24 @@
 /*
- * Landing page motion. Everything here is switched off for visitors with
- * "reduce motion" turned on, and nothing is hidden if JavaScript doesn't run.
+ * Landing page motion and drawing styles.
+ * Everything that moves is switched off for visitors with "reduce motion" turned on,
+ * and nothing is hidden if JavaScript doesn't run.
  */
+
+/* ── Smooth jumps from the menu ───────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
 
 /* ── Scroll-in reveal ─────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
   .js .reveal {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(22px);
     transition:
-      opacity 0.8s ease,
-      transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+      opacity 1s ease,
+      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
     transition-delay: var(--delay, 0ms);
   }
   .js .reveal.is-visible {
@@ -18,11 +26,28 @@
     transform: none;
   }
 
-  /* Lines that draw across when their section appears */
+  /* Headline lines rise out of a mask */
+  .js .reveal .mask-line {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding-bottom: 0.08em;
+  }
+  .js .reveal .mask-line > span {
+    display: inline-block;
+    transform: translateY(105%);
+    transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--delay, 0ms) + var(--line, 0) * 90ms);
+  }
+  .js .reveal.is-visible .mask-line > span {
+    transform: none;
+  }
+
+  /* Rules that draw across when their section appears */
   .js .reveal .grow-x {
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s;
+    transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
   }
   .js .reveal.is-visible .grow-x {
     transform: scaleX(1);
@@ -32,25 +57,25 @@
 /* ── Hero entrance ────────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
   .hero-in {
-    animation: hero-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: hero-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: var(--delay, 0ms);
   }
 }
 @keyframes hero-in {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(16px);
   }
 }
 
-/* ── Example-change ticker ────────────────────────────────── */
+/* ── Example-change ticker (slow, pauses on hover) ────────── */
 .ticker-track {
   display: flex;
   width: max-content;
 }
 @media (prefers-reduced-motion: no-preference) {
   .ticker-track {
-    animation: ticker 60s linear infinite;
+    animation: ticker 140s linear infinite;
   }
   .ticker:hover .ticker-track {
     animation-play-state: paused;
@@ -62,17 +87,26 @@
   }
 }
 
-/* ── Hero drawing ─────────────────────────────────────────── */
+/* ── Scroll progress bar under the menu ───────────────────── */
+.scroll-progress {
+  transform-origin: left;
+  transform: scaleX(var(--progress, 0));
+}
+
+/* ── Drawing: shared line styles ──────────────────────────── */
 .hd-grid line {
   stroke: var(--color-olive);
   stroke-width: 0.5;
-  opacity: 0.35;
+  opacity: 0.32;
 }
 .hd-line {
   fill: none;
   stroke: var(--color-jet);
-  stroke-width: 1.4;
+  stroke-width: 1.3;
   stroke-linejoin: round;
+  transition:
+    stroke 0.4s ease,
+    stroke-width 0.4s ease;
 }
 .hd-thin {
   stroke-width: 0.8;
@@ -95,80 +129,102 @@
   fill: var(--color-jet);
   letter-spacing: 0.04em;
 }
-.hd-leader {
+
+/* ── Interactive explorer ─────────────────────────────────── */
+.hx-part {
+  transition: opacity 0.5s ease;
+}
+.hx-explode {
+  transition:
+    transform 1.2s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.5s ease;
+}
+.is-exploded .hx-explode {
+  transform: translate(var(--dx), var(--dy));
+}
+.hx-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+/* When a change is selected, everything else dims */
+.has-active .hx-part {
+  opacity: 0.32;
+}
+.has-active .hx-part:has(.hx-hl.is-active) {
+  opacity: 1;
+}
+.has-active .hx-part:has(.hx-hl.is-active) > .hd-line,
+.has-active .hx-part:has(.hx-hl.is-active) > circle.hd-line {
+  opacity: 0.35;
+}
+.hx-hl.is-active .hd-line {
+  stroke: var(--color-slate);
+  stroke-width: 2.3;
+}
+
+/* Numbered markers appear once the assembly is exploded */
+.hx-marker {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.5s;
+}
+.is-exploded .hx-marker {
+  opacity: 1;
+}
+.hx-ring {
   fill: none;
   stroke: var(--color-slate);
   stroke-width: 1;
 }
-.hd-dot {
+.hx-dot {
   fill: var(--color-slate);
 }
-.hd-callout-text {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  fill: var(--color-jet-tint);
-}
-/* Without motion: show the first suggestion, highlighted. */
-.hd-callout {
-  opacity: 0;
-}
-.hd-callout-a {
-  opacity: 1;
-}
-.hd-hl-a .hd-line {
+.hx-leader {
   stroke: var(--color-slate);
-  stroke-width: 2.4;
+  stroke-width: 1;
+}
+.hx-tag {
+  fill: var(--color-jungle);
+  stroke: var(--color-slate);
+  stroke-width: 1;
+  transition: fill 0.3s ease;
+}
+.hx-tag-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-jet-tint);
+  transition: fill 0.3s ease;
+}
+.hx-hl.is-active .hx-tag {
+  fill: var(--color-slate);
+}
+.hx-hl.is-active .hx-tag-text {
+  fill: var(--color-jungle);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* 1. Draw every outline in */
-  .js .hd-line[pathLength] {
+  /* Outlines draw themselves in on load */
+  .js .hero-explorer .hd-line[pathLength] {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
-    animation:
-      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
-      hd-dim 14s linear 2.2s infinite;
+    animation: hd-draw 2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
   }
-  .js .hd-line:not([pathLength]) {
-    animation: hd-dim 14s linear 2.2s infinite;
+  /* A slow sonar ring on the selected part */
+  .hx-hl.is-active .hx-ring {
+    animation: hx-ping 2.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+    transform-box: fill-box;
+    transform-origin: center;
   }
-  .js .hd-dash[pathLength] {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
+  .hx-readout {
+    animation: hero-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-
-  /* 2. Explode and reassemble, on a 14-second loop */
-  .js .hd-explode {
-    animation: hd-explode 14s cubic-bezier(0.6, 0, 0.3, 1) 2.2s infinite;
-  }
-
-  /* 3. Highlight one change at a time; the rest dims */
-  .js .hd-hl-a .hd-line {
-    stroke: var(--color-jet);
-    stroke-width: 1.4;
-    animation:
-      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
-      hd-hl-a 14s linear 2.2s infinite;
-  }
-  .js .hd-hl-b .hd-line {
-    animation:
-      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
-      hd-hl-b 14s linear 2.2s infinite;
-  }
-  .js .hd-hl-c .hd-line {
-    animation:
-      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
-      hd-hl-c 14s linear 2.2s infinite;
-  }
-  .js .hd-callout-a {
-    opacity: 0;
-    animation: hd-show-a 14s linear 2.2s infinite;
-  }
-  .js .hd-callout-b {
-    animation: hd-show-b 14s linear 2.2s infinite;
-  }
-  .js .hd-callout-c {
-    animation: hd-show-c 14s linear 2.2s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hx-explode,
+  .hx-part,
+  .hx-marker,
+  .hd-line {
+    transition: none;
   }
 }
 
@@ -177,157 +233,158 @@
     stroke-dashoffset: 0;
   }
 }
-@keyframes hd-explode {
-  0%,
-  8% {
-    transform: none;
+@keyframes hx-ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
   }
-  20%,
-  80% {
-    transform: translate(var(--dx), var(--dy));
-  }
-  92%,
+  80%,
   100% {
-    transform: none;
-  }
-}
-@keyframes hd-dim {
-  0%,
-  20% {
-    opacity: 1;
-  }
-  24%,
-  78% {
-    opacity: 0.35;
-  }
-  84%,
-  100% {
-    opacity: 1;
-  }
-}
-/* Highlight windows: A 24–42%, B 42–60%, C 60–78% */
-@keyframes hd-hl-a {
-  0%,
-  20% {
-    opacity: 1;
-    stroke: var(--color-jet);
-    stroke-width: 1.4;
-  }
-  24%,
-  40% {
-    opacity: 1;
-    stroke: var(--color-slate);
-    stroke-width: 2.4;
-  }
-  43%,
-  78% {
-    opacity: 0.35;
-    stroke: var(--color-jet);
-    stroke-width: 1.4;
-  }
-  84%,
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes hd-hl-b {
-  0%,
-  20% {
-    opacity: 1;
-  }
-  24%,
-  40% {
-    opacity: 0.35;
-    stroke: var(--color-jet);
-    stroke-width: 1.4;
-  }
-  43%,
-  58% {
-    opacity: 1;
-    stroke: var(--color-slate);
-    stroke-width: 2.4;
-  }
-  61%,
-  78% {
-    opacity: 0.35;
-    stroke: var(--color-jet);
-    stroke-width: 1.4;
-  }
-  84%,
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes hd-hl-c {
-  0%,
-  20% {
-    opacity: 1;
-  }
-  24%,
-  58% {
-    opacity: 0.35;
-    stroke: var(--color-jet);
-    stroke-width: 1.4;
-  }
-  61%,
-  76% {
-    opacity: 1;
-    stroke: var(--color-slate);
-    stroke-width: 2.4;
-  }
-  79%,
-  100% {
-    opacity: 1;
-    stroke: var(--color-jet);
-    stroke-width: 1.4;
-  }
-}
-@keyframes hd-show-a {
-  0%,
-  23% {
-    opacity: 0;
-  }
-  26%,
-  39% {
-    opacity: 1;
-  }
-  42%,
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes hd-show-b {
-  0%,
-  42% {
-    opacity: 0;
-  }
-  45%,
-  57% {
-    opacity: 1;
-  }
-  60%,
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes hd-show-c {
-  0%,
-  60% {
-    opacity: 0;
-  }
-  63%,
-  75% {
-    opacity: 1;
-  }
-  78%,
-  100% {
+    transform: scale(2.6);
     opacity: 0;
   }
 }
 
-/* Smooth jump to sections from the menu */
+/* ── Range sliders (the maths section) ────────────────────── */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 24px;
+  background: transparent;
+  cursor: pointer;
+}
+.slider::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(to right, var(--color-jungle) var(--fill, 50%), var(--color-granite) var(--fill, 50%));
+}
+.slider::-moz-range-track {
+  height: 1px;
+  background: var(--color-granite);
+}
+.slider::-moz-range-progress {
+  height: 1px;
+  background: var(--color-jungle);
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6.5px;
+  background: var(--color-jet-tint);
+  border: 1px solid var(--color-jungle);
+  transition: transform 0.2s ease;
+}
+.slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+  background: var(--color-jet-tint);
+  border: 1px solid var(--color-jungle);
+}
+.slider:hover::-webkit-slider-thumb,
+.slider:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.25);
+}
+
+/* ── Mini diagrams in "What it does" ──────────────────────── */
+.md-line {
+  fill: none;
+  stroke: var(--color-jet);
+  stroke-width: 1.2;
+}
+.md-accent {
+  fill: none;
+  stroke: var(--color-slate);
+  stroke-width: 1.6;
+}
+.md-fill {
+  fill: var(--color-slate);
+}
 @media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
+  .md-merge-a {
+    animation: md-merge-a 4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   }
+  .md-merge-b {
+    animation: md-merge-b 4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  .md-weld {
+    animation: md-weld 4s ease infinite;
+  }
+  .md-bolt {
+    animation: md-bolt 4s ease infinite;
+    animation-delay: calc(var(--i) * 120ms);
+  }
+  .md-orbit {
+    offset-path: path("M 100 18 A 40 40 0 1 1 99.9 18");
+    animation: md-orbit 6s linear infinite;
+  }
+}
+@keyframes md-merge-a {
+  0%,
+  20% {
+    transform: translateX(0);
+  }
+  50%,
+  80% {
+    transform: translateX(22px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes md-merge-b {
+  0%,
+  20% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50%,
+  80% {
+    transform: translateX(-22px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes md-weld {
+  0%,
+  25% {
+    opacity: 1;
+  }
+  40%,
+  85% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes md-bolt {
+  0%,
+  35% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  45%,
+  85% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes md-orbit {
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* The orbiting square sits on its loop even when motion is off */
+.md-orbit {
+  offset-path: path("M 100 18 A 40 40 0 1 1 99.9 18");
+  offset-rotate: 0deg;
 }
