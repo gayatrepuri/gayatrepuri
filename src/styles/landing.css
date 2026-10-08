@@ -1,0 +1,333 @@
+/*
+ * Landing page motion. Everything here is switched off for visitors with
+ * "reduce motion" turned on, and nothing is hidden if JavaScript doesn't run.
+ */
+
+/* ── Scroll-in reveal ─────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.8s ease,
+      transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--delay, 0ms);
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Lines that draw across when their section appears */
+  .js .reveal .grow-x {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s;
+  }
+  .js .reveal.is-visible .grow-x {
+    transform: scaleX(1);
+  }
+}
+
+/* ── Hero entrance ────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-in {
+    animation: hero-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: var(--delay, 0ms);
+  }
+}
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* ── Example-change ticker ────────────────────────────────── */
+.ticker-track {
+  display: flex;
+  width: max-content;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ticker-track {
+    animation: ticker 60s linear infinite;
+  }
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
+  }
+}
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Hero drawing ─────────────────────────────────────────── */
+.hd-grid line {
+  stroke: var(--color-olive);
+  stroke-width: 0.5;
+  opacity: 0.35;
+}
+.hd-line {
+  fill: none;
+  stroke: var(--color-jet);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.hd-thin {
+  stroke-width: 0.8;
+}
+.hd-dash {
+  stroke-dasharray: 3 5;
+}
+.hd-center {
+  stroke: var(--color-slate);
+  stroke-width: 0.8;
+  stroke-dasharray: 14 4 2 4;
+}
+.hd-dim line {
+  stroke: var(--color-jet);
+  stroke-width: 0.8;
+}
+.hd-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-jet);
+  letter-spacing: 0.04em;
+}
+.hd-leader {
+  fill: none;
+  stroke: var(--color-slate);
+  stroke-width: 1;
+}
+.hd-dot {
+  fill: var(--color-slate);
+}
+.hd-callout-text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  fill: var(--color-jet-tint);
+}
+/* Without motion: show the first suggestion, highlighted. */
+.hd-callout {
+  opacity: 0;
+}
+.hd-callout-a {
+  opacity: 1;
+}
+.hd-hl-a .hd-line {
+  stroke: var(--color-slate);
+  stroke-width: 2.4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. Draw every outline in */
+  .js .hd-line[pathLength] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation:
+      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
+      hd-dim 14s linear 2.2s infinite;
+  }
+  .js .hd-line:not([pathLength]) {
+    animation: hd-dim 14s linear 2.2s infinite;
+  }
+  .js .hd-dash[pathLength] {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+
+  /* 2. Explode and reassemble, on a 14-second loop */
+  .js .hd-explode {
+    animation: hd-explode 14s cubic-bezier(0.6, 0, 0.3, 1) 2.2s infinite;
+  }
+
+  /* 3. Highlight one change at a time; the rest dims */
+  .js .hd-hl-a .hd-line {
+    stroke: var(--color-jet);
+    stroke-width: 1.4;
+    animation:
+      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
+      hd-hl-a 14s linear 2.2s infinite;
+  }
+  .js .hd-hl-b .hd-line {
+    animation:
+      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
+      hd-hl-b 14s linear 2.2s infinite;
+  }
+  .js .hd-hl-c .hd-line {
+    animation:
+      hd-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards,
+      hd-hl-c 14s linear 2.2s infinite;
+  }
+  .js .hd-callout-a {
+    opacity: 0;
+    animation: hd-show-a 14s linear 2.2s infinite;
+  }
+  .js .hd-callout-b {
+    animation: hd-show-b 14s linear 2.2s infinite;
+  }
+  .js .hd-callout-c {
+    animation: hd-show-c 14s linear 2.2s infinite;
+  }
+}
+
+@keyframes hd-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes hd-explode {
+  0%,
+  8% {
+    transform: none;
+  }
+  20%,
+  80% {
+    transform: translate(var(--dx), var(--dy));
+  }
+  92%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes hd-dim {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  24%,
+  78% {
+    opacity: 0.35;
+  }
+  84%,
+  100% {
+    opacity: 1;
+  }
+}
+/* Highlight windows: A 24–42%, B 42–60%, C 60–78% */
+@keyframes hd-hl-a {
+  0%,
+  20% {
+    opacity: 1;
+    stroke: var(--color-jet);
+    stroke-width: 1.4;
+  }
+  24%,
+  40% {
+    opacity: 1;
+    stroke: var(--color-slate);
+    stroke-width: 2.4;
+  }
+  43%,
+  78% {
+    opacity: 0.35;
+    stroke: var(--color-jet);
+    stroke-width: 1.4;
+  }
+  84%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes hd-hl-b {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  24%,
+  40% {
+    opacity: 0.35;
+    stroke: var(--color-jet);
+    stroke-width: 1.4;
+  }
+  43%,
+  58% {
+    opacity: 1;
+    stroke: var(--color-slate);
+    stroke-width: 2.4;
+  }
+  61%,
+  78% {
+    opacity: 0.35;
+    stroke: var(--color-jet);
+    stroke-width: 1.4;
+  }
+  84%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes hd-hl-c {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  24%,
+  58% {
+    opacity: 0.35;
+    stroke: var(--color-jet);
+    stroke-width: 1.4;
+  }
+  61%,
+  76% {
+    opacity: 1;
+    stroke: var(--color-slate);
+    stroke-width: 2.4;
+  }
+  79%,
+  100% {
+    opacity: 1;
+    stroke: var(--color-jet);
+    stroke-width: 1.4;
+  }
+}
+@keyframes hd-show-a {
+  0%,
+  23% {
+    opacity: 0;
+  }
+  26%,
+  39% {
+    opacity: 1;
+  }
+  42%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes hd-show-b {
+  0%,
+  42% {
+    opacity: 0;
+  }
+  45%,
+  57% {
+    opacity: 1;
+  }
+  60%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes hd-show-c {
+  0%,
+  60% {
+    opacity: 0;
+  }
+  63%,
+  75% {
+    opacity: 1;
+  }
+  78%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Smooth jump to sections from the menu */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

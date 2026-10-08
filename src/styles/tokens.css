@@ -30,7 +30,8 @@
 
   /* Fonts (loaded in src/app/layout.tsx) */
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-mono: var(--font-jb-mono), ui-monospace, monospace;
+  --font-display: var(--font-space-grotesk), var(--font-plex-sans), ui-sans-serif, sans-serif;
 
   /* Square, technical corners: no playful rounding. */
   --radius-*: initial;
