@@ -1,12 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { cleanSupabaseUrl } from "@/lib/env";
 
 // Runs before every page request:
 // 1. keeps the login cookie fresh,
 // 2. sends signed-out visitors away from the tool (/app) to the sign-in page.
 export async function proxy(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const url = cleanSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
   if (!url || !key) return NextResponse.next({ request });
 
   let response = NextResponse.next({ request });
